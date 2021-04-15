@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">ImsThanosApplication</string>
+    <string name="app_name">Mower Application</string>
+    <string name="manualDriving">Manual</string>
+    <string name="autonomousDriving">Autonomous</string>
 </resources>

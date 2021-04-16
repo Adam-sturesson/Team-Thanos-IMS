@@ -23,8 +23,10 @@ class MainActivity : AppCompatActivity() {
         lateinit var m_progress: ProgressDialog
         lateinit var m_bluetoothAdapter: BluetoothAdapter
         var m_isConnected: Boolean = false
-        var m_address: String = "98:D3:81:FD:46:DA" //ändra till egna
-        var btMessenger : BluetoothMessageThread? = null
+        //var m_address: String = "98:D3:81:FD:46:DA" //ändra till egna
+        //var m_address: String = "14:D1:9E:C3:E2:9F"
+        var m_address: String = "B8:27:EB:3A:D7:A4"
+   //     var btMessenger : BluetoothMessageThread? = null
     }
 
 
@@ -33,11 +35,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        Handler().postDelayed({
-            btMessenger = BluetoothMessageThread(m_bluetoothSocket!!)
+      /*  Handler().postDelayed({
+         //   btMessenger = BluetoothMessageThread(m_bluetoothSocket!!)
             btMessenger!!.start()
         }, 3000)
-
+*/      Log.d("data", "Hello ")
         ConnectToDevice(this).execute()
 
 
@@ -51,7 +53,9 @@ class MainActivity : AppCompatActivity() {
 
         override fun onPreExecute() {
             super.onPreExecute()
+            Log.d("data", "Hello preExe")
             m_progress = ProgressDialog.show(context, "Connecting...", "please wait")
+
         }
 
         override fun doInBackground(vararg p0: Void?): String? {
@@ -59,6 +63,7 @@ class MainActivity : AppCompatActivity() {
                 if (m_bluetoothSocket == null || !m_isConnected) {
                     m_bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
                     val device: BluetoothDevice = m_bluetoothAdapter.getRemoteDevice(m_address)
+                    Log.d("data", device.toString())
                     m_bluetoothSocket = device.createInsecureRfcommSocketToServiceRecord(m_myUUID)
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery()
                     m_bluetoothSocket!!.connect()
@@ -73,16 +78,17 @@ class MainActivity : AppCompatActivity() {
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
             if (!connectSuccess) {
-                Log.i("data", "couldn't connect")
+                Log.d("data", "couldn't connect")
 
             } else {
                 m_isConnected = true
+                Log.d("data", "connected")
             }
             m_progress.dismiss()
         }
 
     }
-
+/*
     inner class BluetoothMessageThread(bluetoothSocket: BluetoothSocket) : Thread(){
 
         private val mmInStream: InputStream = m_bluetoothSocket?.inputStream!!
@@ -101,10 +107,6 @@ class MainActivity : AppCompatActivity() {
                     val readMessage = String(mmBuffer, 0, numBytes)
                     if (readMessage.contains(".")) {
                         message += readMessage
-
-                        message = message.trim('.')
-
-
 
                         Log.d("num of bytes:", numBytes.toString())
                         Log.d("buffer:", mmBuffer.toString())
@@ -163,6 +165,6 @@ class MainActivity : AppCompatActivity() {
         }
         finish()
     }
-
+*/
 
 }

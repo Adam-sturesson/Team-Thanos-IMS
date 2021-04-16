@@ -59,6 +59,7 @@ class ConnectToDevice(c: Context) : AsyncTask<Void, Void, String>() {
                 BTObject.m_bluetoothSocket!!.connect()
             }
         } catch (e: IOException) {
+            Log.d("data","CATCH")
             connectSuccess = false
             e.printStackTrace()
         }
@@ -75,8 +76,6 @@ class ConnectToDevice(c: Context) : AsyncTask<Void, Void, String>() {
             Log.d("data", "connected")
         }
         BTObject.m_progress.dismiss()
-        sendCommand("1")
-        sendCommand("0")
 
     }
 

@@ -2,4 +2,9 @@
     <string name="app_name">Mower Application</string>
     <string name="manualDriving">Manual</string>
     <string name="autonomousDriving">Autonomous</string>
+    <string name="stop">stop</string>
+    <string name="forward">forward</string>
+    <string name="right">right</string>
+    <string name="left">left</string>
+    <string name="backward">backward</string>
 </resources>

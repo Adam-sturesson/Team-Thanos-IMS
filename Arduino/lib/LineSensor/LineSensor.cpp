@@ -1,11 +1,13 @@
-#include <LineSensor.h>
+#include "LineSensor.h"
+#include "MeAuriga.h"
+
 
 MeLineFollower linefollower_9(9);
 
 bool RightSensorBlack(){
 
     //right (sensor 1) - black    
-    int ifBlackLine =(linefollower_9.readSensors() & 1);
+    int ifBlackLine = (linefollower_9.readSensors() & 1);
     bool blackLine;
 
     if(ifBlackLine==0)

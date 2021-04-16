@@ -1,5 +1,6 @@
 #include <Motor.h>
-#include <MeAuriga.h>
+#include "MeEncoderOnBoard.h"
+#include "MePort.h"
 
 static MeEncoderOnBoard Encoder_1(SLOT1);
 static MeEncoderOnBoard Encoder_2(SLOT2);
@@ -29,6 +30,8 @@ void _loop() {
   Encoder_1.loop();
   Encoder_2.loop();
 }
+
+
 void isr_process_encoder1(void)
 {
   if(digitalRead(Encoder_1.getPortB()) == 0){
@@ -46,10 +49,12 @@ void isr_process_encoder2(void)
   }
 }
 
+
 void motor_position_interrupt(){  
 attachInterrupt(Encoder_1.getIntNum(), isr_process_encoder1, RISING);
 attachInterrupt(Encoder_2.getIntNum(), isr_process_encoder2, RISING);
 }
+
 
 void _delay(float seconds) {
   if(seconds < 0.0){

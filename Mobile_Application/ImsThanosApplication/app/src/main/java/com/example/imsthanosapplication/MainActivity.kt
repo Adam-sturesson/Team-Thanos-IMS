@@ -1,24 +1,10 @@
 package com.example.imsthanosapplication
-import android.annotation.SuppressLint
-import android.app.ProgressDialog
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothSocket
-import android.content.Context
-import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
-import com.example.imsthanosapplication.ConnectToDevice
-import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -32,13 +18,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-
-      /*  Handler().postDelayed({
+        /*  Handler().postDelayed({
          //   btMessenger = BluetoothMessageThread(m_bluetoothSocket!!)
             btMessenger!!.start()
         }, 3000)
-*/
-        val connection = ConnectToDevice(this)
+        */
+        val connection = BluetoothHandler(this)
         connection.execute()
 
         findViewById<Button>(R.id.manualDriving_button).setOnClickListener {

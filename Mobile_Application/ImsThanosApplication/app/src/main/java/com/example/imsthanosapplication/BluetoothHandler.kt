@@ -5,33 +5,28 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Context
-import android.content.Intent
 import android.os.AsyncTask
-import android.os.Bundle
-import android.os.Handler
 import android.util.Log
-import androidx.core.content.ContextCompat.startActivity
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 
 
 class BTObject {
     companion object {
-        var m_myUUID: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-        var m_bluetoothSocket: BluetoothSocket? = null
-        lateinit var m_progress: ProgressDialog
-        lateinit var m_bluetoothAdapter: BluetoothAdapter
-        var m_isConnected: Boolean = false
+        var uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+        var bluetoothSocket: BluetoothSocket? = null
+        lateinit var progressDialog: ProgressDialog
+        lateinit var bluetoothAdapter: BluetoothAdapter
+        var connected: Boolean = false
         //var m_address: String = "98:D3:81:FD:46:DA" //ändra till egna
         //var m_address: String = "14:D1:9E:C3:E2:9F"
-        var m_address: String = "B8:27:EB:3A:D7:A4"
+        var address: String = "B8:27:EB:3A:D7:A4"
         //     var btMessenger : BluetoothMessageThread? = null
     }
 
 }
 
-class ConnectToDevice(c: Context) : AsyncTask<Void, Void, String>() {
+class BluetoothHandler(c: Context) : AsyncTask<Void, Void, String>() {
 
 
     private var connectSuccess: Boolean = true
@@ -40,23 +35,23 @@ class ConnectToDevice(c: Context) : AsyncTask<Void, Void, String>() {
     override fun onPreExecute() {
         super.onPreExecute()
         Log.d("data", "Hello preExe")
-        BTObject.m_progress = ProgressDialog.show(context, "Connecting...", "please wait")
+        BTObject.progressDialog = ProgressDialog.show(context, "Connecting...", "please wait")
 
     }
 
     override fun doInBackground(vararg p0: Void?): String? {
         try {
-            if (BTObject.m_bluetoothSocket == null || !BTObject.m_isConnected) {
-                BTObject.m_bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
-                val device: BluetoothDevice = BTObject.m_bluetoothAdapter.getRemoteDevice(
-                    BTObject.m_address
+            if (BTObject.bluetoothSocket == null || !BTObject.connected) {
+                BTObject.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+                val device: BluetoothDevice = BTObject.bluetoothAdapter.getRemoteDevice(
+                    BTObject.address
                 )
                 Log.d("data", device.toString())
-                BTObject.m_bluetoothSocket = device.createInsecureRfcommSocketToServiceRecord(
-                    BTObject.m_myUUID
+                BTObject.bluetoothSocket = device.createInsecureRfcommSocketToServiceRecord(
+                    BTObject.uuid
                 )
                 BluetoothAdapter.getDefaultAdapter().cancelDiscovery()
-                BTObject.m_bluetoothSocket!!.connect()
+                BTObject.bluetoothSocket!!.connect()
             }
         } catch (e: IOException) {
             Log.d("data","CATCH")
@@ -72,10 +67,10 @@ class ConnectToDevice(c: Context) : AsyncTask<Void, Void, String>() {
             Log.d("data", "couldn't connect")
 
         } else {
-            BTObject.m_isConnected = true
+            BTObject.connected = true
             Log.d("data", "connected")
         }
-        BTObject.m_progress.dismiss()
+        BTObject.progressDialog.dismiss()
 
     }
 
@@ -83,8 +78,8 @@ class ConnectToDevice(c: Context) : AsyncTask<Void, Void, String>() {
     fun sendCommand(input: String) {
         val TAG = "data"
         try {
-            if (BTObject.m_bluetoothSocket != null) {
-                BTObject.m_bluetoothSocket!!.outputStream.write(input.toByteArray())
+            if (BTObject.bluetoothSocket != null) {
+                BTObject.bluetoothSocket!!.outputStream.write(input.toByteArray())
             }
         }catch (e: IOException) {
             Log.d(TAG, "Could not close the connect socket", e)

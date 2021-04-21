@@ -19,27 +19,27 @@ void setup() {
 
         void motor_position_interrupt();
 
-        move(dir, speed / 100.0 * 255);
+        moveSetup(dir, speed / 100.0 * 255);
 
 }
 
 void loop() {
         if (RightSensorBlack()){        // turn right
 // stop
-                move(1, 0 / 100.0 * 255);
-                _delay(0.5);
+                moveSetup(1, 0 / 100.0 * 255);
+                _delay(0.5,drive);
 //back
-                move(2, 50 / 100.0 * 255);
-                _delay(0.5);
+                moveSetup(2, 50 / 100.0 * 255);
+                _delay(0.5,drive);
 //stop
-                move(1, 0 / 100.0 * 255);
-                _delay(0.5);
+                moveSetup(1, 0 / 100.0 * 255);
+                _delay(0.5,drive);
 //right
-                move(4, 50 / 100.0 * 255);
-                _delay(0.5);
+                moveSetup(4, 50 / 100.0 * 255);
+                _delay(0.5,drive);
 
         }else{
-                move(1, 50 / 100.0 * 255);
-                _loop();
+                moveSetup(1, 50 / 100.0 * 255);
+                drive();
     }
 }

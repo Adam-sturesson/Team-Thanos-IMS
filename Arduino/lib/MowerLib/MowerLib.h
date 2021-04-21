@@ -17,10 +17,11 @@ move related
 #define RIGHT       3
 #define LEFT        4
 
-void move(int direction, int speed);
-void _loop();
+void moveSetup(int direction, int speed);
+void drive();
 void motor_position_interrupt();
-void _delay(float seconds);
+
+void _delay(float seconds,void (*func)(void));
 
 /*
 line_sensor related

@@ -14,8 +14,8 @@ move related
 #define STOP        0
 #define FORWARDS    1
 #define BACKWARDS   2
-#define RIGHT       3
-#define LEFT        4
+#define LEFT        3
+#define RIGHT       4
 
 void moveSetup(int direction, int speed);
 void drive();
@@ -27,7 +27,7 @@ void _delay(float seconds,void (*func)(void));
 line_sensor related
 */
 
-bool RightSensorBlack(); 
+bool lineSensorBlack(); 
 
 /*
 

@@ -153,7 +153,7 @@ MeLineFollower linefollower_9(9);
 
 */ 
 
-bool RightSensorBlack(){
+bool lineSensorBlack(){
 
     //right (sensor 1) - black    
     int ifBlackLine = (linefollower_9.readSensors() & 1);

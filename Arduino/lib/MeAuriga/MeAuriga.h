@@ -72,7 +72,7 @@
 #include "MeGasSensor.h"
 #include "MeEncoderOnBoard.h"
 #include "MeOnBoardTemp.h"
-#include "MeSmartServo.h"
+//#include "MeSmartServo.h"      ställer till lite problem när man kompilar!
 #include "MePS2.h"
 #include "MePm25Sensor.h"
 #include "MeColorSensor.h"

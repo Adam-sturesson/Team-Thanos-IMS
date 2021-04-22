@@ -17,20 +17,9 @@ static MeEncoderOnBoard Encoder_1(SLOT1);
 static MeEncoderOnBoard Encoder_2(SLOT2);
 
 
-/** 
-
-* Sets up the direction and the speed of the motors.  
-
-* @param   direction    the overall direction of the mower.
-
-* @param   speed        a procentage that indicate the motor speed.
-
-*/ 
-
-void moveSetup(int direction, int speed)
-{
+void moveSetup(int direction, int speed){
+  
   speed=speed / 100.0 * 255;
-
   int leftSpeed = 0;
   int rightSpeed = 0;
 
@@ -55,17 +44,7 @@ void moveSetup(int direction, int speed)
 }
 
 
-/** 
-
-* Starts both motors by callig Encoder_1.loop().
-  Encoder_1.loop() :
-   deliverd by the manufacturer,
-   runs respective motor according setup no more than 1 time every 40 ms.
-
-*/ 
-
 void drive() {       
-
   Encoder_1.loop();
   Encoder_2.loop();
 }
@@ -73,7 +52,7 @@ void drive() {
 /** 
 
 * Updates the position of motor 1, called when getting an interrupt that indecate the motor is running.
-
+  This function was provided by the manufacturer.
 */ 
 
 void isr_process_encoder1(void)
@@ -89,7 +68,7 @@ void isr_process_encoder1(void)
 /** 
 
 * Updates the position of motor 1, called when getting an interrupt that indecate the motor is running.
-
+  This function was provided by the manufacturer.
 */ 
 
 void isr_process_encoder2(void)
@@ -101,30 +80,14 @@ void isr_process_encoder2(void)
   }
 }
 
-/** 
 
-* Excutes isr_process_encoder1 and isr_process_encoder2 when the an interrupt from respective motor occure.
-  This make the continues update of motors position possible.
-
-*/ 
-
-void motor_position_interrupt(){  
+void motorPositionInterrupt(){  
 attachInterrupt(Encoder_1.getIntNum(), isr_process_encoder1, RISING);
 attachInterrupt(Encoder_2.getIntNum(), isr_process_encoder2, RISING);
 }
 
-/** 
 
-* Excuting a function for certin period of time what allows to delay without blocking the program. 
-
-* 
-
-* @param   seconds the delay time.
-
-* @param   func    the function to be excuted.
-
-*/ 
-void _delay(float seconds,void (*func)(void)) {
+void DelayAndDO(float seconds,void (*func)(void)) {
   if(seconds < 0.0){
     seconds = 0.0;
   }
@@ -147,18 +110,9 @@ void _delay(float seconds,void (*func)(void)) {
 MeLineFollower linefollower_9(9);
 
 
-/** 
-
-* Detects black colored lines.
-
-* @returns      blackLine which is true if the line is black and false otherwise.
-
-*/ 
-
 bool lineSensorBlack(){
-
-    //right (sensor 1) - black    
-    int ifBlackLine = (linefollower_9.readSensors() & 1);
+  
+    int ifBlackLine = (linefollower_9.readSensors() & 3);
     bool blackLine;
 
     if(ifBlackLine==0)
@@ -195,16 +149,16 @@ void drivingLoop(int *state){
         case TURN_FROM_BOUNDARY :         // turn from the line
                 // stop
                 moveSetup(STOP, 0 );
-                _delay(0.5,drive);
+                DelayAndDO(0.5,drive);
                 //back
                 moveSetup(BACKWARDS, 50);
-                _delay(0.5,drive);
+                DelayAndDO(0.5,drive);
                 //stop
                 moveSetup(STOP, 0 );
-                _delay(0.5,drive);
+                DelayAndDO(0.5,drive);
                 //right
                 moveSetup(RIGHT, 50 );
-                _delay(2.5,drive);
+                DelayAndDO(2.5,drive);
 
                 *state = BOUNDARY_CHECK;
                 break;

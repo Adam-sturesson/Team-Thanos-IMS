@@ -180,19 +180,19 @@ bool lineSensorBlack(){
 void drivingLoop(int *state){
         switch (*state)
         {
-        case 0:         //check for the line.
+        case BOUNDARY_CHECK :         //check for the line.
                 if (lineSensorBlack())
-                        *state=2;
+                        *state = TURN_FROM_BOUNDARY;
                 else
-                        *state=1;
+                        *state = DRIVE_FORWARD;
                 break;
-        case 1:         // drive forward.
+        case DRIVE_FORWARD :         // drive forward.
                 moveSetup(FORWARDS, 50 );
                 drive();
                 // delay?  
-                *state=0; // check again, or maybe set an interrupt for line sensor?
+                *state = BOUNDARY_CHECK; // check again, or maybe set an interrupt for line sensor?
                 break;
-        case 2:         // turn from the line
+        case TURN_FROM_BOUNDARY :         // turn from the line
                 // stop
                 moveSetup(STOP, 0 );
                 _delay(0.5,drive);
@@ -206,7 +206,7 @@ void drivingLoop(int *state){
                 moveSetup(RIGHT, 50 );
                 _delay(2.5,drive);
 
-                *state = 0;
+                *state = BOUNDARY_CHECK;
                 break;
         
         

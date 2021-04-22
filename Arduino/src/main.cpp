@@ -25,7 +25,7 @@ void setup() {
         
         /* developers setup*/
 
-        void motor_position_interrupt();
+        void motorPositionInterrupt();
         //moveSetup(dir, 50); 
 
 }

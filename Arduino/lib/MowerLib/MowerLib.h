@@ -7,8 +7,16 @@
 #include <SoftwareSerial.h>
 
 
+
+struct MowerIndicators{
+    int mode; // auto or man
+    int speed; 
+    int direction;
+
+};
+
 /*
-move related
+    move related
 */
 
 #define STOP        0
@@ -24,14 +32,16 @@ void motor_position_interrupt();
 void _delay(float seconds,void (*func)(void));
 
 /*
-line_sensor related
+    line_sensor related
 */
 
 bool lineSensorBlack(); 
 
 /*
-
+    Mower behavior related.
 */
+
+void drivingLoop(int *state);
 
 
 

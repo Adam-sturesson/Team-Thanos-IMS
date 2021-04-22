@@ -23,12 +23,14 @@ static MeEncoderOnBoard Encoder_2(SLOT2);
 
 * @param   direction    the overall direction of the mower.
 
-* @param   speed        the speed of the mower.
+* @param   speed        a procentage that indicate the motor speed.
 
 */ 
 
 void moveSetup(int direction, int speed)
 {
+  speed=speed / 100.0 * 255;
+
   int leftSpeed = 0;
   int rightSpeed = 0;
 
@@ -170,9 +172,51 @@ bool lineSensorBlack(){
 
 /*
 ------------------------------------------------------------------------------------------
--------------------------------------------------------------
+--------------------------------------Mower behavoir related -----------------------------
 ------------------------------------------------------------------------------------------
 */
+
+
+void drivingLoop(int *state){
+        switch (*state)
+        {
+        case 0:         //check for the line.
+                if (lineSensorBlack())
+                        *state=2;
+                else
+                        *state=1;
+                break;
+        case 1:         // drive forward.
+                moveSetup(FORWARDS, 50 );
+                drive();
+                // delay?  
+                *state=0; // check again, or maybe set an interrupt for line sensor?
+                break;
+        case 2:         // turn from the line
+                // stop
+                moveSetup(STOP, 0 );
+                _delay(0.5,drive);
+                //back
+                moveSetup(BACKWARDS, 50);
+                _delay(0.5,drive);
+                //stop
+                moveSetup(STOP, 0 );
+                _delay(0.5,drive);
+                //right
+                moveSetup(RIGHT, 50 );
+                _delay(2.5,drive);
+
+                *state = 0;
+                break;
+        
+        
+        default:
+                moveSetup(STOP, 0 );
+                //_delay(0.5,drive);
+                // what to do in case program ended up here
+                break;
+        }
+}
 
 /*
   Global variables related to 

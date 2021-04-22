@@ -1,20 +1,29 @@
 package com.example.imsthanosapplication
 
+import android.R
 import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.os.AsyncTask
+import android.os.Bundle
+import android.os.CountDownTimer
+import android.os.PersistableBundle
 import android.util.Log
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import java.io.IOException
 import java.util.*
 
 
 class BTObject {
+
+
     companion object {
         var uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
         var bluetoothSocket: BluetoothSocket? = null
+
         lateinit var progressDialog: ProgressDialog
         lateinit var bluetoothAdapter: BluetoothAdapter
         var connected: Boolean = false
@@ -29,13 +38,16 @@ class BTObject {
 class BluetoothHandler(c: Context) : AsyncTask<Void, Void, String>() {
 
 
-    private var connectSuccess: Boolean = true
+    var connectSuccess: Boolean = false
     private val context: Context = c
+
+
 
     override fun onPreExecute() {
         super.onPreExecute()
         Log.d("data", "Hello preExe")
         BTObject.progressDialog = ProgressDialog.show(context, "Connecting...", "please wait")
+
 
     }
 
@@ -50,6 +62,7 @@ class BluetoothHandler(c: Context) : AsyncTask<Void, Void, String>() {
                 BTObject.bluetoothSocket = device.createInsecureRfcommSocketToServiceRecord(
                     BTObject.uuid
                 )
+                connectSuccess = true
                 BluetoothAdapter.getDefaultAdapter().cancelDiscovery()
                 BTObject.bluetoothSocket!!.connect()
             }
@@ -63,14 +76,15 @@ class BluetoothHandler(c: Context) : AsyncTask<Void, Void, String>() {
 
     override fun onPostExecute(result: String?) {
         super.onPostExecute(result)
-        if (!connectSuccess) {
+        if (connectSuccess) {
             Log.d("data", "couldn't connect")
 
         } else {
             BTObject.connected = true
             Log.d("data", "connected")
+            BTObject.progressDialog.dismiss()
         }
-        BTObject.progressDialog.dismiss()
+
 
     }
 

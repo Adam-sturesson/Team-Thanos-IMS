@@ -41,6 +41,10 @@ bool lineSensorBlack();
     Mower behavior related.
 */
 
+#define BOUNDARY_CHECK      0
+#define DRIVE_FORWARD       1
+#define TURN_FROM_BOUNDARY  2
+
 void drivingLoop(int *state);
 
 

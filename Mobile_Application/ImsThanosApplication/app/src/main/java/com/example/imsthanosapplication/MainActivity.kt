@@ -1,4 +1,5 @@
 package com.example.imsthanosapplication
+
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,10 +7,19 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
-
+import android.app.Activity
+import android.content.Intent
+import android.util.Log
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var navView: BottomNavigationView
 
     //Suppresses warning for the buttons clicklisteners
     @SuppressLint("ClickableViewAccessibility")
@@ -17,12 +27,31 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Setting the navView
+        navView = findViewById(R.id.nav_view)
 
+        //Disables back button in navbar fragments
+        val navController = findNavController(R.id.nav_host_fragment)
+        val appBarConfiguration = AppBarConfiguration(
+                setOf(
+                        R.id.nav_controller, R.id.nav_mower_path
+                )
+        )
+        setupActionBarWithNavController(navController,appBarConfiguration)
+        navView.setupWithNavController(navController)
+
+
+
+
+        // Should be commented
         /*  Handler().postDelayed({
          //   btMessenger = BluetoothMessageThread(m_bluetoothSocket!!)
             btMessenger!!.start()
         }, 3000)
         */
+
+        // Should not be commented
+        /*
         val connection = BluetoothHandler(this)
         connection.execute()
 
@@ -79,11 +108,9 @@ class MainActivity : AppCompatActivity() {
                 return v?.onTouchEvent(event) ?: true
             }
         })
-
+        */
 
 
     }
-
-
 
 }

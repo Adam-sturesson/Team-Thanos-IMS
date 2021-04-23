@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_controller">
+
+    <fragment
+        android:id="@+id/nav_mower_controller"
+        android:name="com.example.imsthanosapplication.fragments.mower_controller"
+        android:label="@string/mowerController"/>
+    <fragment
+        android:id="@+id/nav_mower_path"
+        android:name="com.example.imsthanosapplication.fragments.mower_path"
+        android:label="@string/mowerPath"/>
+</navigation>

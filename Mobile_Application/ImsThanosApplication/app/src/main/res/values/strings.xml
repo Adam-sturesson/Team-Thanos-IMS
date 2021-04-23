@@ -7,4 +7,6 @@
     <string name="right">right</string>
     <string name="left">left</string>
     <string name="backward">backward</string>
+    <string name="mowerController">Control Mower</string>
+    <string name="mowerPath">See path</string>
 </resources>

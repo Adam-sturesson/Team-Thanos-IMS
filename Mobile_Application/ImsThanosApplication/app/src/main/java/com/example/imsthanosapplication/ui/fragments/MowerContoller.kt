@@ -1,42 +1,51 @@
-package com.example.imsthanosapplication
+package com.example.imsthanosapplication.ui.fragments
+
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import com.example.imsthanosapplication.BluetoothHandler
+import com.example.imsthanosapplication.R
 
-
-
-class MainActivity : AppCompatActivity() {
-
-    //Suppresses warning for the buttons clicklisteners
+class MowerContoller : Fragment(R.layout.fragment_mower_contoller) {
     @SuppressLint("ClickableViewAccessibility")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_mower_contoller, container, false)
         /*  Handler().postDelayed({
          //   btMessenger = BluetoothMessageThread(m_bluetoothSocket!!)
             btMessenger!!.start()
         }, 3000)
         */
-        val connection = BluetoothHandler(this)
-        connection.execute()
 
-        findViewById<Button>(R.id.manualDriving_button).setOnClickListener {
+        val connection = BluetoothHandler(requireActivity())
+         //connection.execute()
+
+        val manualDrivingButton = view.findViewById<Button>(R.id.manualDriving_button)
+        manualDrivingButton.setOnClickListener {
             //Change color maybe in future
             connection.sendCommand(getString(R.string.manualDriving))
         }
 
-        findViewById<Button>(R.id.autnomousDriving_button).setOnClickListener {
+        val autnomousDrivingButton = view.findViewById<Button>(R.id.autnomousDriving_button)
+        autnomousDrivingButton.setOnClickListener {
             //Change color maybe in future
-            connection.sendCommand(getString(R.string.autonomousDriving))
+            Log.d("helpme", "auto")
+            //connection.sendCommand(getString(R.string.autonomousDriving))
         }
 
-        findViewById<ImageButton>(R.id.forward_button).setOnTouchListener(object: View.OnTouchListener {
+        val forwardButton = view.findViewById<ImageButton>(R.id.forward_button)
+
+        forwardButton.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
                     MotionEvent.ACTION_DOWN -> connection.sendCommand(getString(R.string.forward))
@@ -46,10 +55,11 @@ class MainActivity : AppCompatActivity() {
                 return v?.onTouchEvent(event) ?: true
             }
         })
-
-        findViewById<ImageButton>(R.id.right_button).setOnTouchListener(object: View.OnTouchListener {
+        val rightButton = view.findViewById<ImageButton>(R.id.right_button)
+        rightButton.setOnTouchListener(object :
+            View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when (event?.action){
+                when (event?.action) {
                     MotionEvent.ACTION_DOWN -> connection.sendCommand(getString(R.string.right))
 
                     MotionEvent.ACTION_UP -> connection.sendCommand(getString(R.string.stop))
@@ -58,9 +68,11 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        findViewById<ImageButton>(R.id.left_button).setOnTouchListener(object: View.OnTouchListener {
+        val leftButton = view.findViewById<ImageButton>(R.id.left_button)
+        leftButton.setOnTouchListener(object :
+            View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when (event?.action){
+                when (event?.action) {
                     MotionEvent.ACTION_DOWN -> connection.sendCommand(getString(R.string.left))
 
                     MotionEvent.ACTION_UP -> connection.sendCommand(getString(R.string.stop))
@@ -69,9 +81,11 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        findViewById<ImageButton>(R.id.backward_button).setOnTouchListener(object: View.OnTouchListener {
+        val backwardButton = view.findViewById<ImageButton>(R.id.backward_button)
+        backwardButton.setOnTouchListener(object :
+            View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when (event?.action){
+                when (event?.action) {
                     MotionEvent.ACTION_DOWN -> connection.sendCommand(getString(R.string.backward))
 
                     MotionEvent.ACTION_UP -> connection.sendCommand(getString(R.string.stop))
@@ -79,11 +93,6 @@ class MainActivity : AppCompatActivity() {
                 return v?.onTouchEvent(event) ?: true
             }
         })
-
-
-
+        return view
     }
-
-
-
 }

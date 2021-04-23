@@ -10,8 +10,6 @@
  int dir=1;
  static int state = 0; 
 
-
-
 /* Program setup */
  
 void setup() {
@@ -28,12 +26,14 @@ void setup() {
         void motorPositionInterrupt();
         //moveSetup(dir, 50); 
 
+        Serial.begin(9600);
+
 }
 
 /* Program loop */
 
 void loop() {
-
-     drivingLoop(&state);
+     
+        drivingLoop(&state);
 
 }

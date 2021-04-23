@@ -1,4 +1,5 @@
 package com.example.imsthanosapplication
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MotionEvent
@@ -10,6 +11,8 @@ import android.widget.ImageButton
 
 class MainActivity : AppCompatActivity() {
 
+    //Suppresses warning for the buttons clicklisteners
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

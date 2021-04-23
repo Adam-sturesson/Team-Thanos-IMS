@@ -38,7 +38,7 @@ class BTObject {
 class BluetoothHandler(c: Context) : AsyncTask<Void, Void, String>() {
 
 
-    var connectSuccess: Boolean = false
+    var connectSuccess: Boolean = true
     private val context: Context = c
 
 
@@ -76,13 +76,14 @@ class BluetoothHandler(c: Context) : AsyncTask<Void, Void, String>() {
 
     override fun onPostExecute(result: String?) {
         super.onPostExecute(result)
-        if (connectSuccess) {
+        if (!connectSuccess) {
             Log.d("data", "couldn't connect")
 
         } else {
             BTObject.connected = true
             Log.d("data", "connected")
             BTObject.progressDialog.dismiss()
+
         }
 
 

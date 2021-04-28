@@ -1,15 +1,17 @@
 
 #include "MowerLib.h"
-
-
+//# include "MeAuriga.h"
+//# include "Wire.h"
+//# include "Arduino.h"
+//# include "SoftwareSerial.h"
 /* Defines */
 
 
 /* Global variables */
- int speed =50;
- int dir=1;
- static int state = 0; 
-
+int speed =50;
+int dir=1;
+static int state = 0;
+  
 
 
 /* Program setup */
@@ -25,15 +27,38 @@ void setup() {
         
         /* developers setup*/
 
-        void motorPositionInterrupt();
-        //moveSetup(dir, 50); 
+        //motorPositionInterrupt();
+        //moveSetup(FORWARDS, 0);
+        //DelayAndDO(0.5,drive);
+        //bluetoothSetup();
+
+        Serial.begin(115200);
+        //bt.begin(115200);
+        
 
 }
 
 /* Program loop */
 
+String st="";
 void loop() {
 
-     drivingLoop(&state);
+        Serial.println(st);
+        delay(100);
+
+        if(Serial.available()>0){
+                st = Serial.readString();
+                delay(100);
+        }
+
+        if(st[0]=='f')
+                moveSetup(FORWARDS,50);
+        if(st[0]=='s')
+                moveSetup(STOP,0); 
+
+drive();       
 
 }
+
+//st=="f\r\n"
+//st=="s\r\n"

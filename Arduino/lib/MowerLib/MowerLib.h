@@ -83,7 +83,31 @@ void DelayAndDO(float seconds,void (*func)(void));
 
 */ 
 
-bool lineSensorBlack(); 
+bool lineSensorBlack();
+
+/*
+    Bluetooth related.
+*/
+
+/** 
+
+* Reads received data from bluetooth via Serial.
+
+* @returns   received data as a String.
+
+*/ 
+
+String bluetoothReceive();
+
+/** 
+
+* sends data to bluetooth via Serial.
+
+* @param   data data as a String to be sent.
+
+*/ 
+
+void bluetoothTransmitt(String data);
 
 /*
     Mower behavior related.

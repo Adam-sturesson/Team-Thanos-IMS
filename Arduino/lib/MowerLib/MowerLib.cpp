@@ -33,12 +33,12 @@ void moveSetup(int direction, int speed)
     leftSpeed = speed;
     rightSpeed = -speed;
   }
-  else if (direction == RIGHT)
+  else if (direction == LEFT)
   {
     leftSpeed = -speed;
     rightSpeed = -speed;
   }
-  else if (direction == LEFT)
+  else if (direction == RIGHT)
   {
     leftSpeed = speed;
     rightSpeed = speed;
@@ -99,6 +99,13 @@ void motorPositionInterrupt()
   attachInterrupt(Encoder_1.getIntNum(), isr_process_encoder1, RISING);
   attachInterrupt(Encoder_2.getIntNum(), isr_process_encoder2, RISING);
 }
+
+void getPos(int * pos1, int *pos2 ){
+  *pos1=Encoder_1.getCurPos();
+  *pos2=Encoder_2.getCurPos();
+}
+
+
 
 void DelayAndDO(float seconds, void (*func)(void))
 {

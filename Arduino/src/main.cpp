@@ -11,6 +11,8 @@
 int speed =50;
 int dir=1;
 static int state = 0;
+int pos1=0;
+int pos2=0;
   
 
 
@@ -27,7 +29,7 @@ void setup() {
         
         /* developers setup*/
 
-        //motorPositionInterrupt();
+        motorPositionInterrupt();
         //moveSetup(FORWARDS, 0);
         //DelayAndDO(0.5,drive);
         //bluetoothSetup();
@@ -41,14 +43,25 @@ void setup() {
 /* Program loop */
 
 String st="";
+String toPrint;
 void loop() {
+        
+    //drivingLoop(&state);    
+        getPos(&pos1,&pos2);
+        toPrint= String(pos1) +" and " + String(pos2);
+        Serial.println(toPrint+"\r\n");
+
+        //drive();   
+}
+
+/*
 
         Serial.println(st);
         delay(100);
 
         if(Serial.available()>0){
                 st = Serial.readString();
-                delay(100);
+                //delay(100);
         }
 
         if(st[0]=='f')
@@ -56,9 +69,8 @@ void loop() {
         if(st[0]=='s')
                 moveSetup(STOP,0); 
 
-drive();       
 
-}
+*/
 
 //st=="f\r\n"
 //st=="s\r\n"

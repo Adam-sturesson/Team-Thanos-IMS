@@ -128,6 +128,6 @@ void bluetoothTransmitt(String data);
 
 void drivingLoop(int *state);
 
-
+void getPos(int * pos1, int *pos2 );
 
 #endif // header_H

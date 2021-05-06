@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Switch
 import com.example.imsthanosapplication.BluetoothHandler
 import com.example.imsthanosapplication.R
 
@@ -41,6 +42,18 @@ class MowerContoller : Fragment(R.layout.fragment_mower_contoller) {
             //Change color maybe in future
             Log.d("helpme", "auto")
             //connection.sendCommand(getString(R.string.autonomousDriving))
+        }
+
+        val startRouteSwitch = view.findViewById<Switch>(R.id.startRoute_switch)
+        startRouteSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if(isChecked){
+                startRouteSwitch.text = resources.getString(R.string.stopRoute)
+                // write here the code send the data command
+            }else{
+                startRouteSwitch.text = resources.getString(R.string.startRoute)
+                // write here the code send the data command
+
+            }
         }
 
         val forwardButton = view.findViewById<ImageButton>(R.id.forward_button)

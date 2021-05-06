@@ -116,7 +116,7 @@ bool detectedObstical(int distance);
 
 
 
-String bluetoothReceive();
+bool bluetoothReceive(int *direction);
 
 /** 
 
@@ -136,7 +136,11 @@ void bluetoothTransmitt(String data);
 #define DRIVE_FORWARD       1
 #define TURN_FROM_BOUNDARY  2
 #define OBSTICALS_CHECK     3
-#define TURN_FROM_OBSTICAL  4 
+#define TURN_FROM_OBSTICAL  4
+#define MANUAL              5
+#define AUTO                6
+#define IDEAL               7
+#define RECEIVE_BT          8
 
 /** 
 

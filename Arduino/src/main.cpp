@@ -8,9 +8,7 @@
 
 
 /* Global variables */
-int speed =50;
-int dir=1;
-static int state = 0;
+static int state = 7;
 int pos1=0;
 int pos2=0;
   
@@ -46,9 +44,18 @@ void setup() {
 
 String st="";
 String toPrint;
+int d=0;
 void loop() {
         
-    drivingLoop(&state);      
+    //drivingLoop(&state);  
+
+    if(bluetoothReceive(&d)){
+            moveSetup(d,SPEED);
+            drive();
+    }
+    moveSetup(STOP,0);
+    drive();
+    
 
 }
 

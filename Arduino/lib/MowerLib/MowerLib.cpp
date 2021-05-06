@@ -172,8 +172,35 @@ bool detectedObstical(int dis){
 --------------------------------------Bluetooth related -----------------------------
 ------------------------------------------------------------------------------------------
 */
+static bool manual=false;
 
-String bluetoothReceive(){
+bool bluetoothReceive(int *direction){
+  String receivedString;
+  bool flag=false;
+  
+  if(Serial.available()>0){
+    receivedString=Serial.readString();
+    flag=true;
+  }
+
+  if(flag){
+    if(receivedString=="m\r\n")//anualDriving
+      manual=true;
+    else if(receivedString=="a\r\n")//utoDriving
+      manual=false;
+    else if(receivedString=="f\r\n")//orward
+      *direction=1;
+    else if(receivedString=="b\r\n")//ackward
+      *direction=2;
+    else if(receivedString=="l\r\n")//eft
+      *direction=3;
+    else if(receivedString=="r\r\n")//ight
+      *direction=4;
+    else if(receivedString=="s\r\n")//top
+      *direction=0;
+  }
+
+  return manual;
 
 }
 
@@ -188,28 +215,52 @@ void bluetoothTransmitt(String data){
 ------------------------------------------------------------------------------------------
 */
 
+int dir=0;
+bool autoPi =true;
+
 void drivingLoop(int *state)
 {
+  
   switch (*state)
   {
+  case IDEAL: //check for the line.
+    if(bluetoothReceive(&dir))
+      *state=MANUAL;
+    else
+      *state=BOUNDARY_CHECK;
+    break;
+
+  case MANUAL: //check for the line.
+    if(bluetoothReceive(&dir)){
+      moveSetup(dir,SPEED);
+      drive();
+      *state=MANUAL;
+    }
+    else
+      *state= BOUNDARY_CHECK;
+    break;
+
   case BOUNDARY_CHECK: //check for the line.
     if (detectedLine())
       *state = TURN_FROM_BOUNDARY;
     else
       *state = OBSTICALS_CHECK;
     break;
+
   case OBSTICALS_CHECK: //check for the line.
     if (detectedObstical(5))
       *state = TURN_FROM_OBSTICAL;
     else
       *state = DRIVE_FORWARD;
     break;  
+
   case DRIVE_FORWARD: // drive forward.
     moveSetup(FORWARDS, SPEED);
     drive();
     // delay?
-    *state = BOUNDARY_CHECK; // check again, or maybe set an interrupt for line sensor?
+    *state = IDEAL; // check again, or maybe set an interrupt for line sensor?
     break;
+
   case TURN_FROM_BOUNDARY: // turn from the line
     // stop
     moveSetup(STOP, 0);
@@ -223,7 +274,7 @@ void drivingLoop(int *state)
     //random returns 3 or 4 meaning left or right
     moveSetup(random(3,5), SPEED);
     DelayAndDO(random(5,15)/10.0, drive);
-    *state = BOUNDARY_CHECK;
+    *state = IDEAL;
     break;
   case TURN_FROM_OBSTICAL: // turn from the line
     // stop
@@ -238,13 +289,13 @@ void drivingLoop(int *state)
     //random returns 3 or 4 meaning left or right
     moveSetup(random(3,5), SPEED);
     DelayAndDO(random(5,15)/10.0, drive);
-    *state = BOUNDARY_CHECK;
+    *state = IDEAL;
     break;
 
 
   default:
     moveSetup(STOP, 0);
-    *state=BOUNDARY_CHECK;
+    *state=IDEAL;
     //_delay(0.5,drive);
     // what to do in case program ended up here
     break;

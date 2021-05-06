@@ -46,16 +46,18 @@ String st="";
 String toPrint;
 void loop() {
         
-    //drivingLoop(&state);    
-        getPos(&pos1,&pos2);
-        toPrint= String(pos1) +" and " + String(pos2);
-        Serial.println(toPrint+"\r\n");
+    drivingLoop(&state);      
 
-        //drive();   
 }
 
 /*
 
+
+
+
+        getPos(&pos1,&pos2);
+        toPrint= String(pos1) +" and " + String(pos2);
+        Serial.println(toPrint+"\r\n");
         Serial.println(st);
         delay(100);
 

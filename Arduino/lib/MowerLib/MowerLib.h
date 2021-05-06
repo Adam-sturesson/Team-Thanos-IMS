@@ -83,7 +83,21 @@ void DelayAndDO(float seconds,void (*func)(void));
 
 */ 
 
-bool lineSensorBlack();
+bool detectedLine();
+
+/*
+    Ultrasonic sensor related
+*/
+
+/** 
+
+*  Reads data from ultrasonic sensor.
+
+* @returns      true if there was an obstical within "distance" cm form the sensor
+
+*/ 
+
+bool detectedObstical(int distance);
 
 /*
     Bluetooth related.
@@ -93,9 +107,13 @@ bool lineSensorBlack();
 
 * Reads received data from bluetooth via Serial.
 
+* @param   distance    distance value to obstical.
+
 * @returns   received data as a String.
 
 */ 
+
+
 
 String bluetoothReceive();
 

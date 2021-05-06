@@ -130,7 +130,7 @@ void DelayAndDO(float seconds, void (*func)(void))
 
 MeLineFollower linefollower_9(9);
 
-bool lineSensorBlack()
+bool detectedLine()
 {
 
   int ifBlackLine = (linefollower_9.readSensors() & 3);
@@ -143,6 +143,28 @@ bool lineSensorBlack()
     blackLine = false;
 
   return blackLine;
+}
+
+
+/*
+------------------------------------------------------------------------------------------
+------------------------------------------ultrasonic Sensor related functions-------------
+------------------------------------------------------------------------------------------
+*/
+
+/*
+  Global variables related to ultrasonic Sensor.
+*/
+
+MeUltrasonicSensor ultrasonic_10(10);
+
+bool detectedObstical(int dis){
+
+  if(ultrasonic_10.distanceCm()<dis)
+    return true;
+  else
+    return false;
+
 }
 
 /*
@@ -171,7 +193,7 @@ void drivingLoop(int *state)
   switch (*state)
   {
   case BOUNDARY_CHECK: //check for the line.
-    if (lineSensorBlack())
+    if (detectedLine())
       *state = TURN_FROM_BOUNDARY;
     else
       *state = DRIVE_FORWARD;

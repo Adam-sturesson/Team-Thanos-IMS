@@ -11,4 +11,5 @@
     <string name="mowerPath">See path</string>
     <string name="tryAgain">Please try again</string>
     <string name="connectScreen">Connect/Disconnect to mower</string>
+    <string name="pleaseConnectToMower">Please connect to mower</string>
 </resources>

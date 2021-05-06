@@ -75,4 +75,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/right_button"
         app:srcCompat="@android:drawable/arrow_down_float" />
+
+    <TextView
+        android:id="@+id/connect_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/backward_button" />
 </androidx.constraintlayout.widget.ConstraintLayout>

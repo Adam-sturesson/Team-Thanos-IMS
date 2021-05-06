@@ -85,8 +85,6 @@ class BluetoothHandler(c: Context) : AsyncTask<Void, Void, String>() {
             BTObject.progressDialog.dismiss()
 
         }
-
-
     }
 
 

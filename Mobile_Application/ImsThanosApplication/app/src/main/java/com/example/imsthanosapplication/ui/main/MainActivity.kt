@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         val navigation : BottomNavigationView = findViewById(R.id.bottomNavigationView)
         navigation.setOnNavigationItemSelectedListener {
             when(it.itemId){
+                R.id.connectScreen_item->setCurrentFragment(connectionScreenFragment)
                 R.id.mowerController_item->setCurrentFragment(mowerControllerFragment)
                 R.id.mowerPath_item->setCurrentFragment(mowerPathFragment)
             }

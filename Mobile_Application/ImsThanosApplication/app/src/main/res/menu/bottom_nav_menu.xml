@@ -7,5 +7,9 @@
         android:id="@+id/mowerPath_item"
         android:title="@string/mowerPath"
         />
+    <item
+        android:id="@+id/connectScreen_item"
+        android:title="@string/connectScreen"
+        />
 
 </menu>

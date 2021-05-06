@@ -29,6 +29,8 @@ void setup() {
         
         /* developers setup*/
 
+        randomSeed(analogRead(0));
+
         motorPositionInterrupt();
         //moveSetup(FORWARDS, 0);
         //DelayAndDO(0.5,drive);

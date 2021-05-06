@@ -133,7 +133,7 @@ MeLineFollower linefollower_9(9);
 bool detectedLine()
 {
 
-  int ifBlackLine = (linefollower_9.readSensors() & 3);
+  int ifBlackLine = (linefollower_9.readSensors() & 1) || (linefollower_9.readSensors() & 2);
   bool blackLine;
 
   if (ifBlackLine == 0)
@@ -196,10 +196,16 @@ void drivingLoop(int *state)
     if (detectedLine())
       *state = TURN_FROM_BOUNDARY;
     else
-      *state = DRIVE_FORWARD;
+      *state = OBSTICALS_CHECK;
     break;
+  case OBSTICALS_CHECK: //check for the line.
+    if (detectedObstical(5))
+      *state = TURN_FROM_OBSTICAL;
+    else
+      *state = DRIVE_FORWARD;
+    break;  
   case DRIVE_FORWARD: // drive forward.
-    moveSetup(FORWARDS, 50);
+    moveSetup(FORWARDS, SPEED);
     drive();
     // delay?
     *state = BOUNDARY_CHECK; // check again, or maybe set an interrupt for line sensor?
@@ -207,22 +213,38 @@ void drivingLoop(int *state)
   case TURN_FROM_BOUNDARY: // turn from the line
     // stop
     moveSetup(STOP, 0);
-    DelayAndDO(0.5, drive);
+    DelayAndDO(0.2, drive);
     //back
-    moveSetup(BACKWARDS, 50);
+    moveSetup(BACKWARDS, SPEED);
     DelayAndDO(0.5, drive);
     //stop
     moveSetup(STOP, 0);
+    DelayAndDO(0.2, drive);
+    //random returns 3 or 4 meaning left or right
+    moveSetup(random(3,5), SPEED);
+    DelayAndDO(random(5,15)/10.0, drive);
+    *state = BOUNDARY_CHECK;
+    break;
+  case TURN_FROM_OBSTICAL: // turn from the line
+    // stop
+    moveSetup(STOP, 0);
+    DelayAndDO(0.2, drive);
+    //back
+    moveSetup(BACKWARDS, SPEED);
     DelayAndDO(0.5, drive);
-    //right
-    moveSetup(RIGHT, 50);
-    DelayAndDO(2.5, drive);
-
+    //stop
+    moveSetup(STOP, 0);
+    DelayAndDO(0.2, drive);
+    //random returns 3 or 4 meaning left or right
+    moveSetup(random(3,5), SPEED);
+    DelayAndDO(random(5,15)/10.0, drive);
     *state = BOUNDARY_CHECK;
     break;
 
+
   default:
     moveSetup(STOP, 0);
+    *state=BOUNDARY_CHECK;
     //_delay(0.5,drive);
     // what to do in case program ended up here
     break;

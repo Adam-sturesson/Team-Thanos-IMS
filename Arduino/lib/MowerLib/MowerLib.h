@@ -24,6 +24,7 @@ struct MowerIndicators{
 #define BACKWARDS   2
 #define LEFT        3
 #define RIGHT       4
+#define SPEED       40
 
 /** 
 
@@ -134,6 +135,8 @@ void bluetoothTransmitt(String data);
 #define BOUNDARY_CHECK      0
 #define DRIVE_FORWARD       1
 #define TURN_FROM_BOUNDARY  2
+#define OBSTICALS_CHECK     3
+#define TURN_FROM_OBSTICAL  4 
 
 /** 
 

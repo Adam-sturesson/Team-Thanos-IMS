@@ -11,4 +11,6 @@
     <string name="mowerPath">See path</string>
     <string name="tryAgain">Please try again</string>
     <string name="connectScreen">Connect/Disconnect to mower</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

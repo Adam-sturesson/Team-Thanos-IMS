@@ -9,4 +9,5 @@
     <string name="backward">backward</string>
     <string name="mowerController">Control Mower</string>
     <string name="mowerPath">See path</string>
+    <string name="tryAgain">Please try again</string>
 </resources>

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.example.imsthanosapplication.R
+import com.example.imsthanosapplication.ui.fragments.ConnectionScreen
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.example.imsthanosapplication.ui.fragments.MowerContoller
 import com.example.imsthanosapplication.ui.fragments.MowerPath
@@ -17,12 +18,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val connectionScreenFragment =
+            ConnectionScreen()
         val mowerControllerFragment=
             MowerContoller()
         val mowerPathFragment=
             MowerPath()
 
-        setCurrentFragment(mowerControllerFragment)
+        setCurrentFragment(connectionScreenFragment)
         val navigation : BottomNavigationView = findViewById(R.id.bottomNavigationView)
         navigation.setOnNavigationItemSelectedListener {
             when(it.itemId){

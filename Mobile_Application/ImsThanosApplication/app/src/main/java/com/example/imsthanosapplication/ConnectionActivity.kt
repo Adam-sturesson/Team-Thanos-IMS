@@ -28,7 +28,6 @@ class ConnectionActivity : AppCompatActivity() {
             val connection = BluetoothHandler(this)
             connection.execute()
 
-
         }
 
     }
@@ -36,7 +35,7 @@ class ConnectionActivity : AppCompatActivity() {
     fun btChangeActivity() {
         if (BTObject.connected) {
             timer.cancel()
-            val intent = Intent(this, MainActivity::class.java)
+            //val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -44,7 +43,4 @@ class ConnectionActivity : AppCompatActivity() {
 
         }
     }
-
-
-
 }

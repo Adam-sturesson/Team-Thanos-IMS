@@ -12,11 +12,12 @@ object DatabaseHandler{
 
     fun getAllRoutes(): MutableList<Route> {
          var routes = mutableListOf<Route>()
-        db.collection("routes").get().
+        db.collection("Routes").get().
             addOnSuccessListener { documents ->
                 if (documents != null) {
                     for (document in documents){
                         var route = Route(document.id, document.getTimestamp("startTime"), document.getTimestamp("StopTime"))
+                        Log.d("hej", route.toString())
                         routes.add(route)
                     }
                 }

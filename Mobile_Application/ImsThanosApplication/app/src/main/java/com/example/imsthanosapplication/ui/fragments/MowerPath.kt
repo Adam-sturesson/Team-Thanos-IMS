@@ -15,9 +15,6 @@ import com.example.imsthanosapplication.data.Route
 
 class MowerPath : Fragment(R.layout.fragment_mower_path) {
 
-    private var arrayAdapter: ArrayAdapter<String>? = null
-    private var routeItems: MutableList<Route>? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,9 +23,9 @@ class MowerPath : Fragment(R.layout.fragment_mower_path) {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_mower_path, container, false)
         var routesListView = view.findViewById<ListView>(R.id.routes_listView)
-        routeItems = DatabaseHandler.getAllRoutes()
+        var routeItems = DatabaseHandler.getAllRoutes()
 
-        arrayAdapter = ArrayAdapter<String>(
+        var arrayAdapter = ArrayAdapter<Route>(
             view.context as Context,
             android.R.layout.simple_spinner_item,
             routeItems

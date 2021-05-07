@@ -1,6 +1,7 @@
 package com.example.imsthanosapplication.ui.fragments
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.TextView
+import com.example.imsthanosapplication.BTObject
 import android.widget.Switch
 import com.example.imsthanosapplication.BluetoothHandler
 import com.example.imsthanosapplication.R
@@ -27,19 +30,27 @@ class MowerContoller : Fragment(R.layout.fragment_mower_contoller) {
             btMessenger!!.start()
         }, 3000)
         */
+        if (!BTObject.connected) {
+            view.findViewById<TextView>(R.id.connect_textView).text = getString(R.string.pleaseConnectToMower)
+        }
 
         val connection = BluetoothHandler(requireActivity())
          //connection.execute()
 
         val manualDrivingButton = view.findViewById<Button>(R.id.manualDriving_button)
+        val autnomousDrivingButton = view.findViewById<Button>(R.id.autnomousDriving_button)
         manualDrivingButton.setOnClickListener {
             //Change color maybe in future
+            manualDrivingButton.setBackgroundColor(Color.GREEN)
+            autnomousDrivingButton.setBackgroundColor(Color.MAGENTA)
             connection.sendCommand(getString(R.string.manualDriving))
         }
 
-        val autnomousDrivingButton = view.findViewById<Button>(R.id.autnomousDriving_button)
+
         autnomousDrivingButton.setOnClickListener {
             //Change color maybe in future
+            autnomousDrivingButton.setBackgroundColor(Color.GREEN)
+            manualDrivingButton.setBackgroundColor(Color.MAGENTA)
             Log.d("helpme", "auto")
             //connection.sendCommand(getString(R.string.autonomousDriving))
         }

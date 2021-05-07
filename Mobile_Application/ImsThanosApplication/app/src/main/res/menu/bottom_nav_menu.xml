@@ -1,15 +1,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
-        android:id="@+id/mowerController_item"
-        android:title="@string/mowerController"
-       />
+        android:id="@+id/connectScreen_item"
+        android:title="@string/connectScreen"
+        />
     <item
         android:id="@+id/mowerPath_item"
         android:title="@string/mowerPath"
         />
     <item
-        android:id="@+id/connectScreen_item"
-        android:title="@string/connectScreen"
+        android:id="@+id/mowerController_item"
+        android:title="@string/mowerController"
         />
-
 </menu>

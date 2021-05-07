@@ -7,6 +7,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:493184264669:android:5c0812039c02ce12d66e34",
+        "android_client_info": {
+          "package_name": "com.ImsThanosApplication.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "493184264669-82b669b1vik341elqee9ib78422mv3rv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCpUwVwIs_di6-ofw7zW5rQxMIic69oeqA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "493184264669-82b669b1vik341elqee9ib78422mv3rv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:493184264669:android:3345d6c73a3d94add66e34",
         "android_client_info": {
           "package_name": "com.example.imsthanosapplication"

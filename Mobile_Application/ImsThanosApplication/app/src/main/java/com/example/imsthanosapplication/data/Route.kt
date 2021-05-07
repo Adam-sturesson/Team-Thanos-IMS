@@ -1,8 +1,8 @@
-package com.example.imsthanosapplication
+package com.example.imsthanosapplication.data
 
 import com.google.firebase.Timestamp
 
-class Routes (
+class Route (
     var id: String,
     var startTime : Timestamp?,
     var stopTime : Timestamp?

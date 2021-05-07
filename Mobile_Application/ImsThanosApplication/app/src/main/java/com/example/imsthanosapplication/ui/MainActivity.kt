@@ -1,13 +1,10 @@
-package com.example.imsthanosapplication.ui.main
+package com.example.imsthanosapplication.ui
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.example.imsthanosapplication.R
-import com.example.imsthanosapplication.ui.fragments.ConnectionScreen
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.example.imsthanosapplication.ui.fragments.MowerContoller
-import com.example.imsthanosapplication.ui.fragments.MowerPath
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,11 +16,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val connectionScreenFragment =
-            ConnectionScreen()
+            ConnectToMowerFragment()
         val mowerControllerFragment=
-            MowerContoller()
+            ControlMowerFragment()
         val mowerPathFragment=
-            MowerPath()
+            ViewRoutesFragment()
 
         setCurrentFragment(connectionScreenFragment)
         val navigation : BottomNavigationView = findViewById(R.id.bottomNavigationView)

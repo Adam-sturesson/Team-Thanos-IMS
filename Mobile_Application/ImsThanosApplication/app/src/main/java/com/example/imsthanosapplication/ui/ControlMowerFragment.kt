@@ -1,4 +1,4 @@
-package com.example.imsthanosapplication.ui.fragments
+package com.example.imsthanosapplication.ui
 
 import android.annotation.SuppressLint
 import android.graphics.Color
@@ -17,7 +17,7 @@ import android.widget.Switch
 import com.example.imsthanosapplication.BluetoothHandler
 import com.example.imsthanosapplication.R
 
-class MowerContoller : Fragment(R.layout.fragment_mower_contoller) {
+class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,

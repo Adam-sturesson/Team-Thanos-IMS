@@ -1,4 +1,4 @@
-package com.example.imsthanosapplication
+package com.example.imsthanosapplication.data
 
 import com.google.firebase.firestore.FirebaseFirestore
 

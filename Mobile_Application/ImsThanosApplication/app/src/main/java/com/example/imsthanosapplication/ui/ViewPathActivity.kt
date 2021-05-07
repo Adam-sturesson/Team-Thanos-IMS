@@ -8,13 +8,12 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.imsthanosapplication.data.DatabaseHandler
 
 
-class TestData {
+class PathCompanion {
     companion object {
-        var testPath: MutableList<Point> = mutableListOf()
+        var listOfPoints: MutableList<Point> = mutableListOf()
     }
 }
 
@@ -22,16 +21,17 @@ class CanvasActivity() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_canvas)
-        val routeId = intent.getStringExtra("routeID")
 
+        val routeId = intent.getStringExtra("routeID")
         val db = DatabaseHandler.db
         val displayMetrics = DisplayMetrics()
         val TAG = "DocSnippets"
+
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         PathObject.height = displayMetrics.heightPixels
         PathObject.width = displayMetrics.widthPixels
 
-        var imageV = findViewById<ImageView>(R.id.imageV)
+        var imageView = findViewById<ImageView>(R.id.path_imageView)
         val bitmap: Bitmap = Bitmap.createBitmap(PathObject.width, PathObject.height, Bitmap.Config.ARGB_8888)
 
         db.collection("Routes").document(routeId!!).collection("positions").get()
@@ -41,14 +41,14 @@ class CanvasActivity() : AppCompatActivity() {
                     PathObject.addPoint(PathObject.startPoint)
                     val x = document.get("x")
                     val y = document.get("y")
-                    TestData.testPath.add(Point(x.hashCode(), y.hashCode()))
+                    PathCompanion.listOfPoints.add(Point(x.hashCode(), y.hashCode()))
                     PathObject.drawPath(bitmap)
-                    imageV.background = BitmapDrawable(resources, bitmap)
+                    imageView.background = BitmapDrawable(resources, bitmap)
                     Log.d(TAG, "${document.id} => ${document.data}")
                 }
             }
             .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents: ", exception)
+                Log.w(TAG, "Error getting documents from database: ", exception)
             }
 
     }

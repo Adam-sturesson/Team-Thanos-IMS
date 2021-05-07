@@ -6,18 +6,15 @@
 #include <Wire.h>
 #include <SoftwareSerial.h>
 
-
-
-struct MowerIndicators{
-    int mode; // auto or man
-    int speed; 
-    int direction;
-
-};
-
-/*
-    move related
-*/
+#define BOUNDARY_CHECK      0
+#define DRIVE_FORWARD       1
+#define TURN_FROM_BOUNDARY  2
+#define OBSTICALS_CHECK     3
+#define TURN_FROM_OBSTACAL  4
+#define MANUEL              5
+#define AUTO                6
+#define IDEAL               7
+#define RECEIVE_BT          8
 
 #define STOP        0
 #define FORWARDS    1
@@ -25,6 +22,22 @@ struct MowerIndicators{
 #define LEFT        3
 #define RIGHT       4
 #define SPEED       40
+
+
+struct MowerIndicators{
+    bool Manuel     =false; // auto or man
+    int speed       =SPEED; 
+    int direction   =STOP;
+    int state       =IDEAL;
+    int angle       =0;
+    int distance    =0;
+};
+
+/*
+    move related
+*/
+
+
 
 /** 
 
@@ -116,7 +129,7 @@ bool detectedObstacal(int distance);
 
 
 
-bool bluetoothReceive(int *direction);
+bool bluetoothReceive();
 
 /** 
 
@@ -132,15 +145,6 @@ void bluetoothTransmitt(String data);
     Mower behavior related.
 */
 
-#define BOUNDARY_CHECK      0
-#define DRIVE_FORWARD       1
-#define TURN_FROM_BOUNDARY  2
-#define OBSTICALS_CHECK     3
-#define TURN_FROM_OBSTACAL  4
-#define MANUEL              5
-#define AUTO                6
-#define IDEAL               7
-#define RECEIVE_BT          8
 
 /** 
 
@@ -153,6 +157,11 @@ void bluetoothTransmitt(String data);
 
 void drivingLoop();
 
-void getPos(int * pos1, int *pos2 );
+int getDistance( );
+void resetDistance();
+
+
+void gyroSetup();
+int gyroRun();
 
 #endif // header_H

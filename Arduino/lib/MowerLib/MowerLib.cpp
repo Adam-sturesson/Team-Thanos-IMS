@@ -10,14 +10,15 @@
 /**
 * Global variables for move.
 */
-
+static MeEncoderOnBoard Encoder_1(SLOT1);
+static MeEncoderOnBoard Encoder_2(SLOT2);
+static MowerIndicators mower;
 
 /**
 * move functions.
 */
 
-static MeEncoderOnBoard Encoder_1(SLOT1);
-static MeEncoderOnBoard Encoder_2(SLOT2);
+
 
 void moveSetup(int direction, int speed)
 {
@@ -98,9 +99,13 @@ void motorPositionInterrupt()
     attachInterrupt(Encoder_2.getIntNum(), isr_process_encoder2, RISING);
 }
 
-void getPos(int * pos1, int *pos2 ){
-    *pos1=Encoder_1.getCurPos();
-    *pos2=Encoder_2.getCurPos();
+int getDistance(){
+    return (((-1*Encoder_1.getCurPos()) + Encoder_2.getCurPos())/2)/360;
+}
+
+void resetDistance(){
+  Encoder_1.setPulsePos(0);
+  Encoder_2.setPulsePos(0);
 }
 
 void delayAndDO(float seconds, void (*func)(void))
@@ -175,13 +180,12 @@ bool detectedObstacal(int dis){
 /*
   Global variables related to Bluetooth.
 */
-static bool manual=false;
 
 /*
   Bluetooth functions.
 */
 
-bool bluetoothReceive(int *direction){
+bool bluetoothReceive(){
   String receivedString;
   bool flag=false;
   
@@ -191,22 +195,22 @@ bool bluetoothReceive(int *direction){
   }
   if(flag){
     if(receivedString=="m\r\n")//anualDriving
-      manual=true;
+      mower.Manuel=true;
     else if(receivedString=="a\r\n")//utoDriving
-      manual=false;
+      mower.Manuel=false;
     else if(receivedString=="f\r\n")//orward
-      *direction=1;
+      mower.direction=1;
     else if(receivedString=="b\r\n")//ackward
-      *direction=2;
+      mower.direction=2;
     else if(receivedString=="l\r\n")//eft
-      *direction=3;
+      mower.direction=3;
     else if(receivedString=="r\r\n")//ight
-      *direction=4;
+      mower.direction=4;
     else if(receivedString=="s\r\n")//top
-      *direction=0;
+      mower.direction=0;
   }
 
-  return manual;
+  return mower.Manuel;
 }
 
 void bluetoothTransmitt(String data){
@@ -223,8 +227,6 @@ void bluetoothTransmitt(String data){
 /*
   Global variables related to Mower behavoir.
 */
-static int dir=0;
-static int state=7;
 
 /*
   Mower behavoir functions.
@@ -233,47 +235,52 @@ static int state=7;
 void drivingLoop()
 {
   
-  switch (state)
+  switch (mower.state)
   {
   case IDEAL: //check for driving mode, auto defaulte.
-    if(bluetoothReceive(&dir))
-      state=MANUEL;
+    if(bluetoothReceive())
+      mower.state=MANUEL;
     else
-      state=BOUNDARY_CHECK;
+      mower.state=BOUNDARY_CHECK;
     break;
 
   case MANUEL: // get direction from bluetooth.
-    if(bluetoothReceive(&dir)){
-      moveSetup(dir,SPEED);
+    if(bluetoothReceive()){
+      moveSetup(mower.direction,SPEED);
       drive();
-      state=MANUEL;
+      mower.state=MANUEL;
     }
     else
-      state= BOUNDARY_CHECK;
+      mower.state= BOUNDARY_CHECK;
     break;
 
   case BOUNDARY_CHECK: //check for the boundary line.
     if (detectedLine())
-      state = TURN_FROM_BOUNDARY;
+      mower.state = TURN_FROM_BOUNDARY;
     else
-      state = OBSTICALS_CHECK;
+      mower.state = OBSTICALS_CHECK;
     break;
 
   case OBSTICALS_CHECK: //check for the line.
     if (detectedObstacal(5))
-      state = TURN_FROM_OBSTACAL;
+      mower.state = TURN_FROM_OBSTACAL;
     else
-      state = DRIVE_FORWARD;
+      mower.state = DRIVE_FORWARD;
     break;  
 
   case DRIVE_FORWARD: // drive forward.
+    
     moveSetup(FORWARDS, SPEED);
     drive();
     // delay?
-    state = IDEAL; // check again, or maybe set an interrupt for line sensor?
+    mower.state = IDEAL; // check again, or maybe set an interrupt for line sensor?
     break;
 
   case TURN_FROM_BOUNDARY: // turn from the line
+    mower.distance=getDistance();
+    
+    Serial.println("ang : " + String(mower.angle) + " dis : " + String(mower.distance));
+    
     // stop
     moveSetup(STOP, 0);
     delayAndDO(0.2, drive);
@@ -286,9 +293,17 @@ void drivingLoop()
     //random returns 3 or 4 meaning left or right
     moveSetup(random(3,5), SPEED);
     delayAndDO(random(5,15)/10.0, drive);
-    state = IDEAL;
+
+    mower.angle=gyroRun();
+    resetDistance();
+
+    mower.state = IDEAL;
     break;
   case TURN_FROM_OBSTACAL: // turn from the line
+    mower.distance=getDistance();
+
+    Serial.println("ang : " + String(mower.angle) + " dis : " + String(mower.distance));
+
     // stop
     moveSetup(STOP, 0);
     delayAndDO(0.2, drive);
@@ -301,15 +316,32 @@ void drivingLoop()
     //random returns 3 or 4 meaning left or right
     moveSetup(random(3,5), SPEED);
     delayAndDO(random(5,15)/10.0, drive);
-    state = IDEAL;
+    
+    mower.angle=gyroRun();
+    resetDistance();
+    
+    mower.state = IDEAL;
     break;
 
 
   default:
     moveSetup(STOP, 0);
-    state=IDEAL;
+    mower.state=IDEAL;
     //_delay(0.5,drive);
     // what to do in case program ended up here
     break;
   }
 }
+
+
+
+MeGyro gyro(0,0x69);
+
+void gyroSetup(){
+  gyro.begin();
+}
+int gyroRun(){
+  gyro.update();
+  return gyro.getAngle(3);
+}
+

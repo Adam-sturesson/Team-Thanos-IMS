@@ -10,7 +10,7 @@
 /* Global variables */
 int pos1=0;
 int pos2=0;
-  
+
 
 
 /* Program setup */
@@ -34,47 +34,41 @@ void setup() {
         //bluetoothSetup();
 
         Serial.begin(115200);
+        gyroSetup();
         //bt.begin(115200);
         
 
 }
 
 /* Program loop */
+String toPrint;
+int circles1=0;
+int circles2=0;
 
+int x=0;
+int y=0;
+int z=0;
+int counter=0;
 void loop() {
         
-    drivingLoop();  
+    //drivingLoop();
+
+
 }
 
 /*
-    if(bluetoothReceive(&d)){
-            moveSetup(d,SPEED);
-            drive();
-    }else{
-        moveSetup(FORWARDS,35);
-        drive();    
-    }
 
-
-
-        getPos(&pos1,&pos2);
-        toPrint= String(pos1) +" and " + String(pos2);
+             moveSetup(FORWARDS,50);
+        drive();
+        
+        toPrint="dis is :" + String(getDistance());
         Serial.println(toPrint+"\r\n");
-        Serial.println(st);
         delay(100);
+        counter++;
 
-        if(Serial.available()>0){
-                st = Serial.readString();
-                //delay(100);
-        }
-
-        if(st[0]=='f')
-                moveSetup(FORWARDS,50);
-        if(st[0]=='s')
-                moveSetup(STOP,0); 
-
-
+        if(counter>100){
+                resetDistance();
+                counter=0;
+        }   
+        
 */
-
-//st=="f\r\n"
-//st=="s\r\n"

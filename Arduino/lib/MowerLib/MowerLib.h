@@ -70,7 +70,7 @@ void motorPositionInterrupt();
 
 */ 
 
-void DelayAndDO(float seconds,void (*func)(void));
+void delayAndDO(float seconds,void (*func)(void));
 
 /*
     line_sensor related
@@ -98,7 +98,7 @@ bool detectedLine();
 
 */ 
 
-bool detectedObstical(int distance);
+bool detectedObstacal(int distance);
 
 /*
     Bluetooth related.
@@ -136,8 +136,8 @@ void bluetoothTransmitt(String data);
 #define DRIVE_FORWARD       1
 #define TURN_FROM_BOUNDARY  2
 #define OBSTICALS_CHECK     3
-#define TURN_FROM_OBSTICAL  4
-#define MANUAL              5
+#define TURN_FROM_OBSTACAL  4
+#define MANUEL              5
 #define AUTO                6
 #define IDEAL               7
 #define RECEIVE_BT          8

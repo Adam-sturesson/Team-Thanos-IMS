@@ -53,4 +53,9 @@ class CanvasActivity() : AppCompatActivity() {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        PathCompanion.listOfPoints.clear()
+    }
+
 }

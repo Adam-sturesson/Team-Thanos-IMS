@@ -8,7 +8,6 @@
 
 
 /* Global variables */
-static int state = 7;
 int pos1=0;
 int pos2=0;
   
@@ -42,25 +41,19 @@ void setup() {
 
 /* Program loop */
 
-String st="";
-String toPrint;
-int d=0;
 void loop() {
         
-    //drivingLoop(&state);  
-
-    if(bluetoothReceive(&d)){
-            moveSetup(d,SPEED);
-            drive();
-    }
-    moveSetup(STOP,0);
-    drive();
-    
-
+    drivingLoop();  
 }
 
 /*
-
+    if(bluetoothReceive(&d)){
+            moveSetup(d,SPEED);
+            drive();
+    }else{
+        moveSetup(FORWARDS,35);
+        drive();    
+    }
 
 
 

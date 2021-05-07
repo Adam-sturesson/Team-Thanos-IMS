@@ -151,7 +151,7 @@ void bluetoothTransmitt(String data);
 
 */
 
-void drivingLoop(int *state);
+void drivingLoop();
 
 void getPos(int * pos1, int *pos2 );
 

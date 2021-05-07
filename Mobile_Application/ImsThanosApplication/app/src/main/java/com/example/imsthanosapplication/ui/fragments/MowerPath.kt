@@ -2,13 +2,16 @@ package com.example.imsthanosapplication.ui.fragments
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import com.example.imsthanosapplication.CanvasActivity
 import com.example.imsthanosapplication.DatabaseHandler
 import com.example.imsthanosapplication.R
 import com.example.imsthanosapplication.Routes as Routes1
@@ -43,6 +46,12 @@ class MowerPath : Fragment(R.layout.fragment_mower_path) {
                         routeItems
                     )
                     routesListView.setAdapter(itemsAdapter)
+                    routesListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+                        val intent = Intent(view.context as Context,
+                            CanvasActivity::class.java)
+                        intent.putExtra("routeID", routeItems[position].id)
+                        this.startActivity(intent)
+                    }
                 }
             }
         return view

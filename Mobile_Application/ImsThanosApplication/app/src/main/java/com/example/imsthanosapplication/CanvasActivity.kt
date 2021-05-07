@@ -22,7 +22,9 @@ class CanvasActivity() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_canvas)
-        val db = FirebaseFirestore.getInstance()
+        val routeId = intent.getStringExtra("routeID")
+
+        val db = DatabaseHandler.db
         val displayMetrics = DisplayMetrics()
         val TAG = "DocSnippets"
         windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -32,8 +34,7 @@ class CanvasActivity() : AppCompatActivity() {
         var imageV = findViewById<ImageView>(R.id.imageV)
         val bitmap: Bitmap = Bitmap.createBitmap(PathObject.width, PathObject.height, Bitmap.Config.ARGB_8888)
 
-        val docRef = db.collection("Path")
-        docRef.get()
+        db.collection("Routes").document(routeId!!).collection("positions").get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     PathObject.startPoint = Point(PathObject.width/2,PathObject.height/2)

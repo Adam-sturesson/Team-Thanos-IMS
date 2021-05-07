@@ -2,72 +2,100 @@ package com.example.imsthanosapplication
 
 import android.R
 import android.app.ProgressDialog
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothSocket
+import android.app.Service
+import android.bluetooth.*
+import android.bluetooth.le.BluetoothLeScanner
+import android.bluetooth.le.ScanCallback
+import android.bluetooth.le.ScanResult
 import android.content.Context
-import android.os.AsyncTask
-import android.os.Bundle
-import android.os.CountDownTimer
-import android.os.PersistableBundle
+import android.content.Intent
+import android.os.*
 import android.util.Log
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import java.io.IOException
 import java.util.*
+import java.util.Collections.list
 
 
 class BTObject {
 
 
     companion object {
-        var uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-        var bluetoothSocket: BluetoothSocket? = null
+        var uuid: UUID = UUID.fromString("0000ffe1-0000-1000-8000-00805f9b34fb")
 
-        lateinit var progressDialog: ProgressDialog
+        var bluetoothSocket: BluetoothSocket? = null
+        private var mBluetoothGatt: BluetoothGatt? = null
+        private var mBluetoothManager: BluetoothManager? = null
         lateinit var bluetoothAdapter: BluetoothAdapter
+
         var connected: Boolean = false
         //var m_address: String = "98:D3:81:FD:46:DA" //ändra till egna
         //var m_address: String = "14:D1:9E:C3:E2:9F"
-        var address: String = "B8:27:EB:3A:D7:A4"
+        // var address: String = "B8:27:EB:3A:D7:A4"
+        var address: String = "00:1B:10:66:46:83"
         //     var btMessenger : BluetoothMessageThread? = null
     }
 
 }
 
-class BluetoothHandler(c: Context) : AsyncTask<Void, Void, String>() {
+class BluetoothHandler(c: Context) :   AsyncTask<Void, Void, String>()  {
 
-
-    var connectSuccess: Boolean = true
+    private var connectSuccess: Boolean = true
     private val context: Context = c
 
 
+    @RequiresApi(Build.VERSION_CODES.R)
 
+    val mLeScanCallback = object : ScanCallback() {
+        override fun onScanResult(callbackType: Int, result: ScanResult) {
+            Log.d("hejsan","iausjd")
+            var uuids : List<ParcelUuid> = result.scanRecord!!.serviceUuids
+            Log.d("hejsan", uuids.toString())
+
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onPreExecute() {
         super.onPreExecute()
-        Log.d("data", "Hello preExe")
-        BTObject.progressDialog = ProgressDialog.show(context, "Connecting...", "please wait")
+        Log.d("hejsan", "Hello preExe")
+        val scanner : BluetoothLeScanner = BTObject.bluetoothAdapter.bluetoothLeScanner
 
-
+        scanner.startScan(mLeScanCallback)
     }
+
 
     override fun doInBackground(vararg p0: Void?): String? {
         try {
             if (BTObject.bluetoothSocket == null || !BTObject.connected) {
                 BTObject.bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+
+
+                /*
+                private val mLeScanCallback = object : ScanCallback() {
+
+    override fun onScanResult(callbackType: Int, result: ScanResult) {
+
+        //scanned BLE processing device
+
+        addDevice(result)
+
+    }
+ }
                 val device: BluetoothDevice = BTObject.bluetoothAdapter.getRemoteDevice(
                     BTObject.address
                 )
-                Log.d("data", device.toString())
+                Log.d("hejsan", device.toString())
                 BTObject.bluetoothSocket = device.createInsecureRfcommSocketToServiceRecord(
                     BTObject.uuid
                 )
-                connectSuccess = true
-                BluetoothAdapter.getDefaultAdapter().cancelDiscovery()
-                BTObject.bluetoothSocket!!.connect()
+                BluetoothAdapter.getDefaultAdapter().cancelDiscovery()*/
+               // BTObject.bluetoothSocket!!.connect()
+               connectSuccess = true
             }
         } catch (e: IOException) {
-            Log.d("data","CATCH")
+            Log.d("hejsan", e.message.toString())
             connectSuccess = false
             e.printStackTrace()
         }
@@ -82,11 +110,8 @@ class BluetoothHandler(c: Context) : AsyncTask<Void, Void, String>() {
         } else {
             BTObject.connected = true
             Log.d("data", "connected")
-            BTObject.progressDialog.dismiss()
-
         }
     }
-
 
     fun sendCommand(input: String) {
         val TAG = "data"
@@ -94,62 +119,9 @@ class BluetoothHandler(c: Context) : AsyncTask<Void, Void, String>() {
             if (BTObject.bluetoothSocket != null) {
                 BTObject.bluetoothSocket!!.outputStream.write(input.toByteArray())
             }
-        }catch (e: IOException) {
+        } catch (e: IOException) {
             Log.d(TAG, "Could not close the connect socket", e)
         }
     }
 
-    /*
-    inner class BluetoothMessageThread(bluetoothSocket: BluetoothSocket) : Thread(){
-
-        private val mmInStream: InputStream = m_bluetoothSocket?.inputStream!!
-        private val mmOutStream: OutputStream = m_bluetoothSocket?.outputStream!!
-        private var mmBuffer: ByteArray = ByteArray(1024) // mmBuffer store for the stream
-        private val TAG = "BluetoothThread"
-        override fun run() {
-            var numBytes: Int
-            var message = ""
-
-            while (true) {
-
-                try {
-                    // Read from the InputStream
-                    numBytes = mmInStream.read(mmBuffer)
-                    val readMessage = String(mmBuffer, 0, numBytes)
-                    if (readMessage.contains(".")) {
-                        message += readMessage
-
-                        Log.d("num of bytes:", numBytes.toString())
-                        Log.d("buffer:", mmBuffer.toString())
-
-                        message = ""
-                    } else {
-                        message += readMessage
-                    }
-                } catch (e: IOException) {
-                    Log.e(TAG, "disconnected", e);
-
-                }
-            }
-        }
-
-        fun write(bytes: ByteArray) {
-            try {
-                mmOutStream.write(bytes)
-            } catch (e: IOException) {
-                Log.e(TAG, "Error occurred when sending data", e)
-            }
-        }
-
-
-
-        fun cancel() {
-            try {
-                m_bluetoothSocket?.close()
-            } catch (e: IOException) {
-                Log.e(TAG, "Could not close the connect socket", e)
-            }
-        }
-    }
-*/
 }

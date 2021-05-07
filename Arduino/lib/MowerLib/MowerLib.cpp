@@ -10,15 +10,12 @@
 /**
 * Global variables for move.
 */
-
-
-/**
-* move functions.
-*/
-
 static MeEncoderOnBoard Encoder_1(SLOT1);
 static MeEncoderOnBoard Encoder_2(SLOT2);
 
+/**
+* Move functions.
+*/
 void moveSetup(int direction, int speed)
 {
     speed = speed / 100.0 * 255;
@@ -147,17 +144,17 @@ bool detectedLine()
 
 /*
 ------------------------------------------------------------------------------------------
-----------------------------ultrasonic Sensor functions---------------------------
+-----------------------------------ultrasonic Sensor -------------------------------------
 ------------------------------------------------------------------------------------------
 */
 
 /**
-* Global variables related to ultrasonic Sensor.
+* Global variables for ultrasonic Sensor.
 */
 MeUltrasonicSensor ultrasonic_10(10);
 
 /**
-* ultrasonic Sensor functions.
+* Ultrasonic Sensor functions.
 */
 bool detectedObstacal(int dis){
     if(ultrasonic_10.distanceCm()<dis)
@@ -168,45 +165,43 @@ bool detectedObstacal(int dis){
 
 /*
 ------------------------------------------------------------------------------------------
---------------------------------------Bluetooth ------------ -----------------------------
+--------------------------------------Bluetooth ------------------------------------------
 ------------------------------------------------------------------------------------------
 */
 
-/*
-  Global variables related to Bluetooth.
+/**
+* Global variables for Bluetooth.
 */
 static bool manual=false;
 
-/*
-  Bluetooth functions.
+/**
+* Bluetooth functions.
 */
-
 bool bluetoothReceive(int *direction){
-  String receivedString;
-  bool flag=false;
-  
-  if(Serial.available()>0){
-    receivedString=Serial.readString();
-    flag=true;
-  }
-  if(flag){
-    if(receivedString=="m\r\n")//anualDriving
-      manual=true;
-    else if(receivedString=="a\r\n")//utoDriving
-      manual=false;
-    else if(receivedString=="f\r\n")//orward
-      *direction=1;
-    else if(receivedString=="b\r\n")//ackward
-      *direction=2;
-    else if(receivedString=="l\r\n")//eft
-      *direction=3;
-    else if(receivedString=="r\r\n")//ight
-      *direction=4;
-    else if(receivedString=="s\r\n")//top
-      *direction=0;
-  }
-
-  return manual;
+    String receivedString;
+    bool flag=false;
+    
+    if(Serial.available()>0){
+        receivedString=Serial.readString();
+        flag=true;
+    }
+    if(flag){
+        if(receivedString=="m\r\n")//anualDriving
+            manual=true;
+        else if(receivedString=="a\r\n")//utoDriving
+            manual=false;
+        else if(receivedString=="f\r\n")//orward
+            *direction=1;
+        else if(receivedString=="b\r\n")//ackward
+            *direction=2;
+        else if(receivedString=="l\r\n")//eft
+            *direction=3;
+        else if(receivedString=="r\r\n")//ight
+            *direction=4;
+        else if(receivedString=="s\r\n")//top
+            *direction=0;
+    }
+    return manual;
 }
 
 void bluetoothTransmitt(String data){
@@ -216,100 +211,99 @@ void bluetoothTransmitt(String data){
 
 /*
 ------------------------------------------------------------------------------------------
---------------------------------------Mower behavoir related -----------------------------
+--------------------------------Mower behavoir related -----------------------------------
 ------------------------------------------------------------------------------------------
 */
 
-/*
-  Global variables related to Mower behavoir.
+/**
+* Global variables for Mower behavoir.
 */
 static int dir=0;
 static int state=7;
 
-/*
-  Mower behavoir functions.
+/**
+* Mower behavoir functions.
 */
-
 void drivingLoop()
 {
   
   switch (state)
   {
   case IDEAL: //check for driving mode, auto defaulte.
-    if(bluetoothReceive(&dir))
-      state=MANUEL;
-    else
-      state=BOUNDARY_CHECK;
-    break;
+      if(bluetoothReceive(&dir))
+          state=MANUEL;
+      else
+          state=BOUNDARY_CHECK;
+      break;
 
   case MANUEL: // get direction from bluetooth.
-    if(bluetoothReceive(&dir)){
-      moveSetup(dir,SPEED);
-      drive();
-      state=MANUEL;
-    }
-    else
-      state= BOUNDARY_CHECK;
-    break;
+      if(bluetoothReceive(&dir)){
+          moveSetup(dir,SPEED);
+          drive();
+          state=MANUEL;
+      }
+      else
+          state= BOUNDARY_CHECK;
+      break;
 
   case BOUNDARY_CHECK: //check for the boundary line.
-    if (detectedLine())
-      state = TURN_FROM_BOUNDARY;
-    else
-      state = OBSTICALS_CHECK;
-    break;
+      if (detectedLine())
+          state = TURN_FROM_BOUNDARY;
+      else
+          state = OBSTICALS_CHECK;
+      break;
 
   case OBSTICALS_CHECK: //check for the line.
-    if (detectedObstacal(5))
-      state = TURN_FROM_OBSTACAL;
-    else
-      state = DRIVE_FORWARD;
-    break;  
+      if (detectedObstacal(5))
+          state = TURN_FROM_OBSTACAL;
+      else
+          state = DRIVE_FORWARD;
+      break;
 
   case DRIVE_FORWARD: // drive forward.
-    moveSetup(FORWARDS, SPEED);
-    drive();
-    // delay?
-    state = IDEAL; // check again, or maybe set an interrupt for line sensor?
-    break;
+      moveSetup(FORWARDS, SPEED);
+      drive();
+      // delay?
+      state = IDEAL; // check again, or maybe set an interrupt for line sensor?
+      break;
 
   case TURN_FROM_BOUNDARY: // turn from the line
-    // stop
-    moveSetup(STOP, 0);
-    delayAndDO(0.2, drive);
-    //back
-    moveSetup(BACKWARDS, SPEED);
-    delayAndDO(0.5, drive);
-    //stop
-    moveSetup(STOP, 0);
-    delayAndDO(0.2, drive);
-    //random returns 3 or 4 meaning left or right
-    moveSetup(random(3,5), SPEED);
-    delayAndDO(random(5,15)/10.0, drive);
-    state = IDEAL;
-    break;
-  case TURN_FROM_OBSTACAL: // turn from the line
-    // stop
-    moveSetup(STOP, 0);
-    delayAndDO(0.2, drive);
-    //back
-    moveSetup(BACKWARDS, SPEED);
-    delayAndDO(0.5, drive);
-    //stop
-    moveSetup(STOP, 0);
-    delayAndDO(0.2, drive);
-    //random returns 3 or 4 meaning left or right
-    moveSetup(random(3,5), SPEED);
-    delayAndDO(random(5,15)/10.0, drive);
-    state = IDEAL;
-    break;
+      // stop
+      moveSetup(STOP, 0);
+      delayAndDO(0.2, drive);
+      //back
+      moveSetup(BACKWARDS, SPEED);
+      delayAndDO(0.5, drive);
+      //stop
+      moveSetup(STOP, 0);
+      delayAndDO(0.2, drive);
+      //random returns 3 or 4 meaning left or right
+      moveSetup(random(3,5), SPEED);
+      delayAndDO(random(5,15)/10.0, drive);
+      state = IDEAL;
+      break;
 
+  case TURN_FROM_OBSTACAL: // turn from the line
+      // stop
+      moveSetup(STOP, 0);
+      delayAndDO(0.2, drive);
+      //back
+      moveSetup(BACKWARDS, SPEED);
+      delayAndDO(0.5, drive);
+      //stop
+      moveSetup(STOP, 0);
+      delayAndDO(0.2, drive);
+      //random returns 3 or 4 meaning left or right
+      moveSetup(random(3,5), SPEED);
+      delayAndDO(random(5,15)/10.0, drive);
+      state = IDEAL;
+      break;
 
   default:
-    moveSetup(STOP, 0);
-    state=IDEAL;
-    //_delay(0.5,drive);
-    // what to do in case program ended up here
-    break;
+      moveSetup(STOP, 0);
+      state=IDEAL;
+      //_delay(0.5,drive);
+      // what to do in case program ended up here
+      break;
   }
 }

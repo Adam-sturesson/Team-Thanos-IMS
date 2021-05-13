@@ -2,6 +2,8 @@ package com.example.imsthanosapplication.ui
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.os.Build
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,13 +13,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.annotation.RequiresApi
+import com.example.imsthanosapplication.BluetoothLE
 import android.widget.TextView
 import com.example.imsthanosapplication.BTObject
 import android.widget.Switch
 import com.example.imsthanosapplication.BluetoothHandler
 import com.example.imsthanosapplication.R
+import com.example.imsthanosapplication.bleSingleton
 
 class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,34 +31,28 @@ class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_mower_contoller, container, false)
-        /*  Handler().postDelayed({
-         //   btMessenger = BluetoothMessageThread(m_bluetoothSocket!!)
-            btMessenger!!.start()
-        }, 3000)
-        */
-        if (!BTObject.connected) {
-            view.findViewById<TextView>(R.id.connect_textView).text = getString(R.string.pleaseConnectToMower)
-        }
 
-        val connection = BluetoothHandler(requireActivity())
-         //connection.execute()
+
+        val ble : BluetoothLE? = bleSingleton.mBle
 
         val manualDrivingButton = view.findViewById<Button>(R.id.manualDriving_button)
         val autnomousDrivingButton = view.findViewById<Button>(R.id.autnomousDriving_button)
         manualDrivingButton.setOnClickListener {
             //Change color maybe in future
-            manualDrivingButton.setBackgroundColor(Color.GREEN)
-            autnomousDrivingButton.setBackgroundColor(Color.MAGENTA)
-            connection.sendCommand(getString(R.string.manualDriving))
+            if (ble != null) {
+                ble.sendCommand(getString(R.string.manualDriving))
+                manualDrivingButton.setBackgroundColor(Color.GREEN)
+                autnomousDrivingButton.setBackgroundColor(Color.MAGENTA)
+            }
         }
-
 
         autnomousDrivingButton.setOnClickListener {
             //Change color maybe in future
-            autnomousDrivingButton.setBackgroundColor(Color.GREEN)
-            manualDrivingButton.setBackgroundColor(Color.MAGENTA)
-            Log.d("helpme", "auto")
-            //connection.sendCommand(getString(R.string.autonomousDriving))
+            if (ble != null) {
+                ble.sendCommand(getString(R.string.autonomousDriving))
+                autnomousDrivingButton.setBackgroundColor(Color.GREEN)
+                manualDrivingButton.setBackgroundColor(Color.MAGENTA)
+            }
         }
 
         val startRouteSwitch = view.findViewById<Switch>(R.id.startRoute_switch)
@@ -72,9 +72,17 @@ class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
         forwardButton.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> connection.sendCommand(getString(R.string.forward))
+                    MotionEvent.ACTION_DOWN -> {
+                        if (ble != null) {
+                            ble.sendCommand(getString(R.string.forward))
+                        }
+                    }
 
-                    MotionEvent.ACTION_UP -> connection.sendCommand(getString(R.string.stop))
+                    MotionEvent.ACTION_UP -> {
+                        if (ble != null) {
+                            ble.sendCommand(getString(R.string.stop))
+                        }
+                    }
                 }
                 return v?.onTouchEvent(event) ?: true
             }
@@ -84,9 +92,16 @@ class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
             View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> connection.sendCommand(getString(R.string.right))
-
-                    MotionEvent.ACTION_UP -> connection.sendCommand(getString(R.string.stop))
+                    MotionEvent.ACTION_DOWN -> {
+                        if (ble != null) {
+                            ble.sendCommand(getString(R.string.right))
+                        }
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        if (ble != null) {
+                            ble.sendCommand(getString(R.string.stop))
+                        }
+                    }
                 }
                 return v?.onTouchEvent(event) ?: true
             }
@@ -97,9 +112,17 @@ class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
             View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> connection.sendCommand(getString(R.string.left))
+                    MotionEvent.ACTION_DOWN -> {
+                        if (ble != null) {
+                            ble.sendCommand(getString(R.string.left))
+                        }
+                    }
 
-                    MotionEvent.ACTION_UP -> connection.sendCommand(getString(R.string.stop))
+                    MotionEvent.ACTION_UP -> {
+                        if (ble != null) {
+                            ble.sendCommand(getString(R.string.stop))
+                        }
+                    }
                 }
                 return v?.onTouchEvent(event) ?: true
             }
@@ -110,9 +133,17 @@ class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
             View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> connection.sendCommand(getString(R.string.backward))
+                    MotionEvent.ACTION_DOWN -> {
+                        if (ble != null) {
+                            ble.sendCommand(getString(R.string.backward))
+                        }
+                    }
 
-                    MotionEvent.ACTION_UP -> connection.sendCommand(getString(R.string.stop))
+                    MotionEvent.ACTION_UP -> {
+                        if (ble != null) {
+                            ble.sendCommand(getString(R.string.stop))
+                        }
+                    }
                 }
                 return v?.onTouchEvent(event) ?: true
             }

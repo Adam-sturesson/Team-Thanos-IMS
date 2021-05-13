@@ -1,20 +1,24 @@
 package com.example.imsthanosapplication.ui
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import com.example.imsthanosapplication.BTObject
-import com.example.imsthanosapplication.BluetoothHandler
-import com.example.imsthanosapplication.R
+import androidx.annotation.RequiresApi
+import com.example.imsthanosapplication.*
 
 
 
 class ConnectToMowerFragment : Fragment(R.layout.fragment_connection_screen) {
+    var ble : BluetoothLE? = BluetoothLE()
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -27,31 +31,27 @@ class ConnectToMowerFragment : Fragment(R.layout.fragment_connection_screen) {
                 btChangeFragment(this, targetFragment)
             }
             override fun onFinish() {
-                BTObject.progressDialog.dismiss()
                 view.findViewById<TextView>(R.id.errorTV).text = getString(R.string.tryAgain)
             }
         }
         view.findViewById<Button>(R.id.connectBTN).setOnClickListener {
-            timer.start()
-            val connection = BluetoothHandler( requireContext())
-            connection.execute()
+            if (bleSingleton.mBle != null) {
+                timer.start()
+                bleSingleton.mBle!!.setup(requireContext())
+                bleSingleton.mBle!!.selectDevice()
+                Log.d("hejsan", "pressed button connect " + ble!!.isConnected().toString())
+            }
         }
         return view
     }
 
     fun btChangeFragment(timer:CountDownTimer, targetFragment: Fragment) {
-        if (BTObject.connected) {
+        if (ble!!.isConnected()) {
             timer.cancel()
             activity?.supportFragmentManager?.beginTransaction()?.apply {
                 replace(R.id.active_fragment, targetFragment )
                 commit()
             }
         }
-        else{
-
-        }
-    }
-    companion object {
-
     }
 }

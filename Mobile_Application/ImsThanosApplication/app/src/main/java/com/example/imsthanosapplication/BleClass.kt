@@ -18,9 +18,6 @@ class BleClass {
         fun onConnect(gatt: BluetoothGatt?)
     }
 
-    interface OnServiceDiscoverListener {
-        fun onServiceDiscover(gatt: BluetoothGatt?)
-    }
 
     interface OnDataAvailableListener {
         fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int)
@@ -28,24 +25,11 @@ class BleClass {
     }
 
     private var mOnConnectListener: OnConnectListener? = null
-    private var mOnServiceDiscoverListener: OnServiceDiscoverListener? = null
     private var mOnDataAvailableListener: OnDataAvailableListener? = null
     private var mContext: Context? = null
 
-    fun setOnConnectListener(l: OnConnectListener) {
-        mOnConnectListener = l
-    }
-
     constructor (c: Context) {
         mContext = c
-    }
-
-    fun setOnServiceDiscoverListener(l: OnServiceDiscoverListener) {
-        mOnServiceDiscoverListener = l
-    }
-
-    fun setOnDataAvailableListener(l: OnDataAvailableListener) {
-        mOnDataAvailableListener = l
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -84,8 +68,6 @@ class BleClass {
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun initialize(): Boolean {
-        // For API level 18 and above, get a reference to BluetoothAdapter through
-        // BluetoothManager.
         if (mBluetoothManager == null) {
             mBluetoothManager = mContext!!.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             if (mBluetoothManager == null) {
@@ -101,6 +83,7 @@ class BleClass {
         }
         return true
     }
+
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun connect(address: String?): Boolean {
         if (mBluetoothAdapter == null || address == null) {
@@ -136,17 +119,6 @@ class BleClass {
         mBluetoothGatt = null
     }
 
-
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    fun setCharacteristicNotification(characteristic: BluetoothGattCharacteristic?,
-                                      enabled: Boolean) {
-        if (mBluetoothAdapter == null || mBluetoothGatt == null) {
-            Log.w("hejsan", "BluetoothAdapter not initialized")
-            return
-        }
-        mBluetoothGatt!!.setCharacteristicNotification(characteristic, enabled)
-    }
-
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun writeCharacteristic(command: String): Boolean {
         if (bleSingleton.mGatt != null) {
@@ -162,10 +134,5 @@ class BleClass {
             }
         }
         return false
-    }
-
-    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    fun getSupportedGattServices(): List<BluetoothGattService?>? {
-        return if (mBluetoothGatt == null) null else mBluetoothGatt!!.services as List<BluetoothGattService?>
     }
 }

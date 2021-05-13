@@ -1,6 +1,5 @@
 package com.example.imsthanosapplication.ui.fragments
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -12,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.replace
 import com.example.imsthanosapplication.*
 
 

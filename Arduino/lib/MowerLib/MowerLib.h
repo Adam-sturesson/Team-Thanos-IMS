@@ -45,7 +45,7 @@ struct MowerIndicators{
 
 * @param   direction    the overall direction of the mower.
 
-* @param   speed        a procentage that indicate the motor speed.
+* @param   speed        a percentage that indicates the motor speed.
 
 */ 
 
@@ -55,8 +55,8 @@ void moveSetup(int direction, int speed);
 
 * Starts both motors by callig Encoder_1.loop().
   Encoder_1.loop() :
-   deliverd by the manufacturer,
-   runs respective motor according setup no more than 1 time every 40 ms.
+  deliverd by the manufacturer,
+  runs respective motor according setup no more than 1 time every 40 ms.
 
 */ 
 

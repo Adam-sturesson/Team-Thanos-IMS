@@ -1,8 +1,6 @@
 #include "MowerLib.h"
 #include <MeAuriga.h>
 
-
-
 static MowerIndicators mower;
 
 /*
@@ -14,6 +12,7 @@ static MowerIndicators mower;
 /**
 * Global variables for move.
 */
+
 static MeEncoderOnBoard Encoder_1(SLOT1);
 static MeEncoderOnBoard Encoder_2(SLOT2);
 
@@ -64,7 +63,7 @@ void drive()
 }
 
 /** 
-* Updates the position of motor 1, called when getting an interrupt that indecate the motor is running.
+* Updates the position of motor 1, called when getting an interrupt that indicate the motor is running.
   This function was provided by the manufacturer.
 */
 void isr_process_encoder1(void)
@@ -80,7 +79,7 @@ void isr_process_encoder1(void)
 }
 
 /** 
-* Updates the position of motor 2, called when getting an interrupt that indecate the motor is running.
+* Updates the position of motor 2, called when getting an interrupt that indicate the motor is running.
   This function was provided by the manufacturer.
 */
 void isr_process_encoder2(void)
@@ -119,6 +118,7 @@ void resetDistance(){
 /**
 * Global variables for Line Sensor.
 */
+
 MeLineFollower linefollower_9(9);
 
 /**
@@ -147,6 +147,7 @@ bool detectedLine()
 /**
 * Global variables related to ultrasonic Sensor.
 */
+
 MeUltrasonicSensor ultrasonic_10(10);
 
 /**
@@ -191,40 +192,37 @@ int gyroRun(){
 ------------------------------------------------------------------------------------------
 */
 
-/*
-  Global variables related to Bluetooth.
-*/
-
-/*
-  Bluetooth functions.
+/**
+* Bluetooth functions.
 */
 
 bool bluetoothReceive(){
-  String receivedString;
-  bool flag=false;
-  
-  if(Serial.available()>0){
-    receivedString=Serial.readString();
-    flag=true;
-  }
-  if(flag){
-    if(receivedString=="m\r\n")//anualDriving
-      mower.Manuel=true;
-    else if(receivedString=="a\r\n")//utoDriving
-      mower.Manuel=false;
-    else if(receivedString=="f\r\n")//orward
-      mower.direction=1;
-    else if(receivedString=="b\r\n")//ackward
-      mower.direction=2;
-    else if(receivedString=="l\r\n")//eft
-      mower.direction=3;
-    else if(receivedString=="r\r\n")//ight
-      mower.direction=4;
-    else if(receivedString=="s\r\n")//top
-      mower.direction=0;
-  }
+    String receivedString;
+    bool flag=false;
+    
+    if(Serial.available()>0){
+        receivedString=Serial.readString();
+        flag=true;
+    }
 
-  return mower.Manuel;
+    if(flag){
+        if(receivedString=="m\r\n")//anualDriving
+            mower.Manuel=true;
+        else if(receivedString=="a\r\n")//utoDriving
+            mower.Manuel=false;
+        else if(receivedString=="f\r\n")//orward
+            mower.direction=1;
+        else if(receivedString=="b\r\n")//ackward
+            mower.direction=2;
+        else if(receivedString=="l\r\n")//eft
+            mower.direction=3;
+        else if(receivedString=="r\r\n")//ight
+            mower.direction=4;
+        else if(receivedString=="s\r\n")//top
+            mower.direction=0;
+    }
+
+    return mower.Manuel;
 }
 
 void bluetoothTransmitt(String data){}
@@ -245,7 +243,6 @@ void bluetoothTransmitt(String data){}
 
 void drivingLoop()
 {
-  
   switch (mower.state)
   {
   case IDEAL: //check for driving mode, auto defaulte.

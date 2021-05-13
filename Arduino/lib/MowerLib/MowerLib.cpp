@@ -200,31 +200,31 @@ int gyroRun(){
 */
 
 bool bluetoothReceive(){
-  String receivedString;
+  char receivedCommand;
   bool flag=false;
   
   if(Serial.available()>0){
-    receivedString=Serial.readString();
+    receivedCommand=Serial.read();
     flag=true;
   }
   if(flag){
-    if(receivedString=="m\r\n")//anualDriving
-      mower.Manuel=true;
-    else if(receivedString=="a\r\n")//utoDriving
-      mower.Manuel=false;
-    else if(receivedString=="f\r\n")//orward
+    if(receivedCommand=='m')//anualDriving
+      mower.mode=MANUAL;
+    else if(receivedCommand=='a')//utoDriving
+      mower.mode=AUTO;
+    else if(receivedCommand=='f')//orward
       mower.direction=1;
-    else if(receivedString=="b\r\n")//ackward
+    else if(receivedCommand=='b')//ackward
       mower.direction=2;
-    else if(receivedString=="l\r\n")//eft
+    else if(receivedCommand=='l')//eft
       mower.direction=3;
-    else if(receivedString=="r\r\n")//ight
+    else if(receivedCommand=='r')//ight
       mower.direction=4;
-    else if(receivedString=="s\r\n")//top
+    else if(receivedCommand=='s')//top
       mower.direction=0;
   }
 
-  return mower.Manuel;
+  return mower.mode;
 }
 
 void bluetoothTransmitt(String data){}
@@ -239,11 +239,13 @@ void bluetoothTransmitt(String data){}
   Global variables related to Mower behavoir.
 */
 
+int turningTimes[5]={500,750,1000,1250,1500};
+
 /*
   Mower behavoir functions.
 */
-
-void drivingLoop()
+/*
+void drivingLoop1()
 {
   
   switch (mower.state)
@@ -343,7 +345,106 @@ void drivingLoop()
     break;
   }
 }
+*/
 
+void drivingLoop(){
+  
+  switch (mower.state)
+  {
+  case IDEAL: //check for driving mode, auto defaulte.
+    if(bluetoothReceive()==MANUAL)
+      mower.state=UPDATE_BT_COM;
+    else
+      mower.state=CHECK_BOUNDARY;
+    break;
+
+  case UPDATE_BT_COM: // get direction from bluetooth.
+    moveSetup(mower.direction,SPEED);
+    mower.state=DRIVE;
+    break;
+
+  case CHECK_BOUNDARY: //check for the boundary line.
+    if (detectedLine()==true){
+      mower.state = SET_BACKWARDS;
+      mower.turning_stage=TURN_OFF;
+    }
+    else
+      mower.state = CHECK_OBSTACLE;
+    break;
+
+  case CHECK_OBSTACLE: //check for the line.
+    if (detectedObstacal(5)){
+      mower.state = SET_BACKWARDS;
+      mower.turning_stage=TURN_OFF;
+    }
+    else if(mower.turning_stage!=TURN_OFF){
+      mower.state=mower.turning_stage;
+    }
+      
+    else{
+      mower.state = SET_FORWARDS;
+    }
+      
+    break;  
+
+  case SET_FORWARDS: // drive forward.
+    moveSetup(FORWARDS, SPEED);
+    mower.state = DRIVE;
+    break;
+
+  case SET_BACKWARDS:
+    if(mower.turning_stage==TURN_OFF){
+      mower.turning_stage=SET_BACKWARDS;
+      mower.wait_until_ms=millis()+TURN_BACK_TIME;
+      moveSetup(BACKWARDS,SPEED);
+    }
+
+    if(millis()<mower.wait_until_ms)
+      mower.state=DRIVE;
+    else
+      mower.state=SET_STOP;
+    break;
+
+  case SET_STOP:
+    if(mower.turning_stage==SET_BACKWARDS){
+      mower.turning_stage=SET_STOP;
+      mower.wait_until_ms=millis()+TURN_STOP_TIME;
+      moveSetup(STOP,0);
+    }
+    if(millis()<mower.wait_until_ms)
+      mower.state=DRIVE;
+    else
+      mower.state=SET_RIGHT_LEFT;
+    break;
+
+  case SET_RIGHT_LEFT:
+    if(mower.turning_stage==SET_STOP){
+      mower.turning_stage=SET_RIGHT_LEFT;
+      mower.wait_until_ms=millis()+randomTurningTime();
+      //returns 3 or 4 meaning left or right.
+      moveSetup(random(3,5),SPEED);
+    }
+    if(millis()<mower.wait_until_ms)
+      mower.state=DRIVE;
+    else{
+      mower.state=IDEAL;
+      mower.turning_stage=TURN_OFF;
+    }
+      
+    break;
+
+    case DRIVE:
+    drive();
+    mower.state=IDEAL;
+    break;
+
+
+  default:
+    moveSetup(STOP, 0);
+    mower.state=IDEAL;
+    break;
+  }
+}
 void delayAndDO(float seconds, void (*func)(void))
 {
     if (seconds < 0.0)
@@ -353,4 +454,8 @@ void delayAndDO(float seconds, void (*func)(void))
     unsigned long endTime = millis() + seconds * 1000;
     while (millis() < endTime)
         func();
+}
+
+int randomTurningTime(){
+  return turningTimes[random(0,5)];
 }

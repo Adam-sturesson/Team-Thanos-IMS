@@ -5,8 +5,8 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <SoftwareSerial.h>
-
-#define BOUNDARY_CHECK      0
+/*
+#define BOUNDARY_CHECK      10
 #define DRIVE_FORWARD       1
 #define TURN_FROM_BOUNDARY  2
 #define OBSTICALS_CHECK     3
@@ -15,6 +15,26 @@
 #define AUTO                6
 #define IDEAL               7
 #define RECEIVE_BT          8
+*/
+
+#define IDEAL               0
+#define UPDATE_BT_COM       1
+#define CHECK_BOUNDARY      2
+#define CHECK_OBSTACLE      3
+#define SET_FORWARDS        4
+#define SET_BACKWARDS       5
+#define SET_RIGHT_LEFT      6
+#define SET_STOP            7
+#define DRIVE               8
+
+#define MANUAL              0
+#define AUTO                1
+
+#define TURN_OFF            0
+
+#define TURN_BACK_TIME      500
+#define TURN_STOP_TIME      500
+#define TURN_R_L_TIME       500
 
 #define STOP               0
 #define FORWARDS           1
@@ -25,12 +45,15 @@
 
 
 struct MowerIndicators{
-    bool Manuel     =false; // auto or man
-    int speed       =SPEED; 
-    int direction   =STOP;
-    int state       =IDEAL;
-    int angle       =0;
-    int distance    =0;
+    bool mode                   =AUTO; // auto or man
+    int speed                   =SPEED; 
+    int direction               =STOP;
+    int state                   =IDEAL;
+    int angle                   =0;
+    int distance                =0;
+    int turning_stage           =TURN_OFF;
+    unsigned long wait_until_ms =0;
+    int turn_l_r_wait           =0;
 };
 
 /*
@@ -187,6 +210,17 @@ void drivingLoop();
 
 */ 
 void delayAndDO(float seconds,void (*func)(void));
+
+/** 
+
+* choose one random value of the value array turningTimes[]. 
+
+* 
+
+* @returns   one of 5 predefined values of waitin time.
+
+*/ 
+int randomTurningTime();
 
 
 

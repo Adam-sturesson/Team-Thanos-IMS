@@ -16,12 +16,12 @@
 #define IDEAL               7
 #define RECEIVE_BT          8
 
-#define STOP        0
-#define FORWARDS    1
-#define BACKWARDS   2
-#define LEFT        3
-#define RIGHT       4
-#define SPEED       40
+#define STOP               0
+#define FORWARDS           1
+#define BACKWARDS          2
+#define LEFT               3
+#define RIGHT              4
+#define SPEED              40
 
 
 struct MowerIndicators{
@@ -34,7 +34,7 @@ struct MowerIndicators{
 };
 
 /*
-    move related
+                                                MOTOR RELATED
 */
 
 
@@ -68,8 +68,112 @@ void drive();
   This make the continues update of motors position possible.
 
 */ 
-
 void motorPositionInterrupt();
+
+/** 
+
+* return the distanc run by the motor
+
+* @returns      distance.
+
+*/ 
+int getDistance( );
+
+/** 
+
+* resets the distance
+
+*/ 
+void resetDistance();
+
+
+
+
+/*
+                                                LINE-SENSOR
+*/
+
+/** 
+
+* Detects black colored lines.
+
+* @returns      blackLine which is true if the line is black and false otherwise.
+
+*/ 
+bool detectedLine();
+
+/*
+                                                ULTRASONIC
+*/
+
+/** 
+
+*  Reads data from ultrasonic sensor.
+
+* @returns      true if there was an obstical within "distance" cm form the sensor
+
+*/
+bool detectedObstacal(int distance);
+
+/*
+                                                GYROSCOPE
+*/
+
+
+/** 
+
+* Sets up gyro according to manufacturers recommendations.
+
+*/ 
+void gyroSetup();
+
+/** 
+
+* Reads turning angle 
+
+* @returns   an angel between 0 and +/- 180, there + is right.
+
+*/ 
+int gyroRun();
+
+/*
+                                                BLUETOOTH
+*/
+
+/** 
+
+* Reads received data from bluetooth via Serial.
+
+* @param   distance    distance value to obstical.
+
+* @returns   received data as a String.
+
+*/ 
+bool bluetoothReceive();
+
+
+/** 
+
+* sends data to bluetooth via Serial.
+
+* @param   data data as a String to be sent.
+
+*/ 
+void bluetoothTransmitt(String data);
+
+/*
+                                                MOWER BEHAVIOUR
+*/
+
+
+/** 
+
+* Steers the beahvior of the mower.
+
+* @param   *state the start state fo the machine
+
+*/
+void drivingLoop();
 
 /** 
 
@@ -82,86 +186,8 @@ void motorPositionInterrupt();
 * @param   func    the function to be excuted.
 
 */ 
-
 void delayAndDO(float seconds,void (*func)(void));
 
-/*
-    line_sensor related
-*/
 
-/** 
-
-* Detects black colored lines.
-
-* @returns      blackLine which is true if the line is black and false otherwise.
-
-*/ 
-
-bool detectedLine();
-
-/*
-    Ultrasonic sensor related
-*/
-
-/** 
-
-*  Reads data from ultrasonic sensor.
-
-* @returns      true if there was an obstical within "distance" cm form the sensor
-
-*/ 
-
-bool detectedObstacal(int distance);
-
-/*
-    Bluetooth related.
-*/
-
-/** 
-
-* Reads received data from bluetooth via Serial.
-
-* @param   distance    distance value to obstical.
-
-* @returns   received data as a String.
-
-*/ 
-
-
-
-bool bluetoothReceive();
-
-/** 
-
-* sends data to bluetooth via Serial.
-
-* @param   data data as a String to be sent.
-
-*/ 
-
-void bluetoothTransmitt(String data);
-
-/*
-    Mower behavior related.
-*/
-
-
-/** 
-
-* Steers the beahvior of the mower.
-* 
-
-* @param   *state the start state fo the machine
-
-*/
-
-void drivingLoop();
-
-int getDistance( );
-void resetDistance();
-
-
-void gyroSetup();
-int gyroRun();
 
 #endif // header_H

@@ -1,9 +1,13 @@
 #include "MowerLib.h"
 #include <MeAuriga.h>
 
+
+
+static MowerIndicators mower;
+
 /*
 ------------------------------------------------------------------------------------------
------------------------------------ Move  ------------------------------------------------
+----------------------------------- MOTOR  -----------------------------------------------
 ------------------------------------------------------------------------------------------
 */
 
@@ -12,13 +16,11 @@
 */
 static MeEncoderOnBoard Encoder_1(SLOT1);
 static MeEncoderOnBoard Encoder_2(SLOT2);
-static MowerIndicators mower;
+
 
 /**
 * move functions.
 */
-
-
 
 void moveSetup(int direction, int speed)
 {
@@ -108,20 +110,6 @@ void resetDistance(){
   Encoder_2.setPulsePos(0);
 }
 
-void delayAndDO(float seconds, void (*func)(void))
-{
-    if (seconds < 0.0)
-    {
-        seconds = 0.0;
-    }
-    unsigned long endTime = millis() + seconds * 1000;
-    while (millis() < endTime)
-        func();
-}
-
-
-
-
 /*
 ------------------------------------------------------------------------------------------
 -----------------------------Line Sensor -------------------------------------------------
@@ -152,7 +140,7 @@ bool detectedLine()
 
 /*
 ------------------------------------------------------------------------------------------
-----------------------------ultrasonic Sensor functions---------------------------
+----------------------------ultrasonic Sensor functions-----------------------------------
 ------------------------------------------------------------------------------------------
 */
 
@@ -164,11 +152,37 @@ MeUltrasonicSensor ultrasonic_10(10);
 /**
 * ultrasonic Sensor functions.
 */
+
 bool detectedObstacal(int dis){
     if(ultrasonic_10.distanceCm()<dis)
         return true;
     else
         return false;
+}
+
+/*
+------------------------------------------------------------------------------------------
+----------------------------GYROSCOPE Sensor functions-----------------------------------
+------------------------------------------------------------------------------------------
+*/
+
+/**
+* Global variables related to gyro.
+*/
+
+MeGyro gyro(0,0x69);
+
+/**
+* gyro functions.
+*/
+
+void gyroSetup(){
+  gyro.begin();
+}
+
+int gyroRun(){
+  gyro.update();
+  return gyro.getAngle(3);
 }
 
 /*
@@ -213,10 +227,7 @@ bool bluetoothReceive(){
   return mower.Manuel;
 }
 
-void bluetoothTransmitt(String data){
-  
-}
-
+void bluetoothTransmitt(String data){}
 
 /*
 ------------------------------------------------------------------------------------------
@@ -333,15 +344,13 @@ void drivingLoop()
   }
 }
 
-
-
-MeGyro gyro(0,0x69);
-
-void gyroSetup(){
-  gyro.begin();
+void delayAndDO(float seconds, void (*func)(void))
+{
+    if (seconds < 0.0)
+    {
+        seconds = 0.0;
+    }
+    unsigned long endTime = millis() + seconds * 1000;
+    while (millis() < endTime)
+        func();
 }
-int gyroRun(){
-  gyro.update();
-  return gyro.getAngle(3);
-}
-

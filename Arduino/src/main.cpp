@@ -1,15 +1,11 @@
 
 #include "MowerLib.h"
-//# include "MeAuriga.h"
-//# include "Wire.h"
-//# include "Arduino.h"
-//# include "SoftwareSerial.h"
+
+
 /* Defines */
 
 
 /* Global variables */
-int pos1=0;
-int pos2=0;
 
 
 
@@ -27,48 +23,18 @@ void setup() {
         /* developers setup*/
 
         randomSeed(analogRead(0));
-
         motorPositionInterrupt();
-        //moveSetup(FORWARDS, 0);
-        //DelayAndDO(0.5,drive);
-        //bluetoothSetup();
-
         Serial.begin(115200);
         gyroSetup();
-        //bt.begin(115200);
         
 
 }
 
 /* Program loop */
-String toPrint;
-int circles1=0;
-int circles2=0;
 
-int x=0;
-int y=0;
-int z=0;
-int counter=0;
 void loop() {
         
-    //drivingLoop();
+    drivingLoop();
 
 
 }
-
-/*
-
-             moveSetup(FORWARDS,50);
-        drive();
-        
-        toPrint="dis is :" + String(getDistance());
-        Serial.println(toPrint+"\r\n");
-        delay(100);
-        counter++;
-
-        if(counter>100){
-                resetDistance();
-                counter=0;
-        }   
-        
-*/

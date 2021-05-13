@@ -72,10 +72,10 @@ void moveSetup(int direction, int speed);
 
 /** 
 
-* Starts both motors by callig Encoder_1.loop() and Encoder_2.loop().
-  Encoder_1.loop() & Encoder_2.loop() :
-   deliverd by the manufacturer,
-   runs respective motor according setup no more than 1 time every 40 ms.
+* Starts both motors by callig Encoder_1.loop().
+  Encoder_1.loop() :
+  deliverd by the manufacturer,
+  runs respective motor according setup no more than 1 time every 40 ms.
 
 */
 void drive();

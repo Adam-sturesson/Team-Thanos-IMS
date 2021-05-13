@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import java.util.*
 
 
 class BleClass {
@@ -55,14 +56,17 @@ class BleClass {
                 mOnConnectListener?.onConnect(gatt)
                 Log.d("hejsan", "Connected to Gattserver")
                 Log.d("hejsan", "Attempting to start service discovery:" + mBluetoothGatt?.discoverServices())
+                bleSingleton.mGattService = mBluetoothGatt!!.getService(UUID.fromString(bleSingleton.UUID_KEY_DATA))
             }
         }
+
+        override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
+            Log.d("hejsan", "onCharacteristicWrite received: $status")
+        }
         override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
-            if (status == BluetoothGatt.GATT_SUCCESS && mOnServiceDiscoverListener != null) {
-                mOnServiceDiscoverListener!!.onServiceDiscover(gatt)
-            } else {
-                Log.w("hejsan", "onServicesDiscovered received: $status")
-            }
+            bleSingleton.mGatt = gatt
+            Log.w("hejsan", "onServicesDiscovered received: $status")
+
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?,status: Int) {
@@ -103,7 +107,6 @@ class BleClass {
             Log.d("hejsan", "BluetoothAdapter not initialized or unspecified address.")
             return false
         }
-        Log.d("hejsan",mBluetoothGatt.toString())
         if (address != null && mBluetoothGatt != null) {
             Log.d("hejsan", "Trying to use an existing mBluetoothGatt for connection.")
             return if (mBluetoothGatt!!.connect()) {
@@ -145,9 +148,20 @@ class BleClass {
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    fun writeCharacteristic(characteristic: BluetoothGattCharacteristic?) {
-        Log.d("hejsan",characteristic?.value.toString())
-        mBluetoothGatt!!.writeCharacteristic(characteristic)
+    fun writeCharacteristic(command: String): Boolean {
+        if (bleSingleton.mGatt != null) {
+            for (gattService in bleSingleton.mGatt!!.services) {
+                for (characteristic in gattService.characteristics) {
+                    if (characteristic.uuid.toString() == bleSingleton.UUID_WRITE_CHARACTERISTIC) {
+                        characteristic.setValue(command)
+                        var succeed = mBluetoothGatt!!.writeCharacteristic(characteristic)
+                        Log.d("hejsan", "writeCharacteristic: $command $succeed")
+                        return succeed
+                    }
+                }
+            }
+        }
+        return false
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)

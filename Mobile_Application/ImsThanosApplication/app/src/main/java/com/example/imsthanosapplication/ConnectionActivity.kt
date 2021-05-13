@@ -5,12 +5,10 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import com.example.imsthanosapplication.ui.main.MainActivity
-import kotlin.concurrent.timer
 
 class ConnectionActivity : AppCompatActivity() {
     var ble : BluetoothLE? = null
@@ -27,18 +25,14 @@ class ConnectionActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_connection)
-        ble = BluetoothLE().sharedManager()
 
         findViewById<Button>(R.id.connectBTN).setOnClickListener {
             if (ble != null) {
                 timer.start()
                 ble!!.setup(this)
                 ble!!.selectDevice()
-                Log.d("hejsan", "om denna syns är adam dum " + ble!!.isConnected().toString())
             }
-
         }
-
     }
 
     fun btChangeActivity() {
@@ -47,9 +41,6 @@ class ConnectionActivity : AppCompatActivity() {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
-        }
-        else{
-
         }
     }
 }

@@ -1,117 +1,114 @@
 package com.example.imsthanosapplication
 import android.app.Service
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothGattCharacteristic
-import android.bluetooth.BluetoothManager
+import android.bluetooth.*
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.os.Handler
-import android.os.IBinder
-import android.os.Message
+import android.os.*
 import android.util.Log
 import androidx.annotation.RequiresApi
 import java.util.*
 
+object bleSingleton {
+    val deviceAddress = "00:1B:10:66:46:83"
+    val UUID_KEY_DATA = "0000ffe1-0000-1000-8000-00805f9b34fb"
+    val UUID_WRITE_CHARACTERISTIC = "0000ffe3-0000-1000-8000-00805f9b34fb"
+    var mContext: Context? = null
+    var mBluetoothAdapter: BluetoothAdapter? = null
+    var mBLEClass: BleClass? = null
+    var mCurrentDevice: BluetoothDevice? = null
+    var leHandler: Handler? = null
+    var mIsConnected = false
+    var mGattService :BluetoothGattService? = null
+    var mGatt : BluetoothGatt? = null
+    var mBle : BluetoothLE? = null
+}
+
 
 class BluetoothLE : Service() {
-    private val deviceAddress = "00:1B:10:66:46:83"
-    private val UUID_KEY_DATA = "0000ffe1-0000-1000-8000-00805f9b34fb"
-    private val UUID_WRITE_CHARACTERISTIC = "0000ffe3-0000-1000-8000-00805f9b34fb"
-    private var mContext: Context? = null
-    private var mBluetoothAdapter: BluetoothAdapter? = null
-    private var mBLE: BleClass? = null
-    private var mCurrentDevice: BluetoothDevice? = null
-    var leHandler: Handler? = null
-    private var mIsConnected = false
+    var binder = Localbinder()
 
-    private var _instance: BluetoothLE? = null
-
-    fun sharedManager(): BluetoothLE? {
-        if (_instance == null) {
-            _instance = BluetoothLE()
-        }
-        return _instance
+    init {
+        bleSingleton.mBle = this
     }
-
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun setup(context: Context) {
-        mContext = context
+        bleSingleton.mContext = context
         var bluetoothManager : BluetoothManager? = null
-        if (mContext != null) {
-            bluetoothManager = mContext!!.getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
+        if (bleSingleton.mContext != null) {
+            bluetoothManager = bleSingleton.mContext!!.getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
         }
         if (bluetoothManager != null) {
-            mBluetoothAdapter = bluetoothManager.adapter
+            bleSingleton.mBluetoothAdapter = bluetoothManager.adapter
         }
 
-        if (mBluetoothAdapter != null) {
-            mBluetoothAdapter!!.enable()
+        if (bleSingleton.mBluetoothAdapter != null) {
+            bleSingleton.mBluetoothAdapter!!.enable()
         }
-        if (mContext != null) {
-            Log.d("hejsan", mContext.toString())
-            mBLE = BleClass(mContext!!)
-            Log.d("hejsan", mBLE.toString())
+        if (bleSingleton.mContext != null) {
+            Log.d("hejsan","context: " +  bleSingleton.mContext.toString())
+            bleSingleton.mBLEClass = BleClass(bleSingleton.mContext!!)
+            Log.d("hejsan","mBLE: " +  bleSingleton.mBLEClass.toString())
         }
-        if (!mBLE!!.initialize()) {
+        if (!bleSingleton.mBLEClass!!.initialize()) {
             Log.d("hejsan", "Unable to initialize Bluetooth")
         }
 
     }
 
     fun stop() {
-        mIsConnected = false
+        bleSingleton.mIsConnected = false
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun close() {
-        mBLE!!.close()
-        mIsConnected = false
-        mCurrentDevice = null
+        bleSingleton.mBLEClass!!.close()
+        bleSingleton.mIsConnected = false
+        bleSingleton.mCurrentDevice = null
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun selectDevice() {
         var device: BluetoothDevice? = null
-        if (mBluetoothAdapter != null) {
-            device = mBluetoothAdapter!!.getRemoteDevice(deviceAddress)
+        if (bleSingleton.mBluetoothAdapter != null) {
+            device = bleSingleton.mBluetoothAdapter!!.getRemoteDevice(bleSingleton.deviceAddress)
         }
-        if (leHandler != null) {
-            val msg: Message = leHandler!!.obtainMessage(10) // ????????????????????
-            leHandler!!.sendMessage(msg)
+        if (bleSingleton.leHandler != null) {
+            val msg: Message = bleSingleton.leHandler!!.obtainMessage(10) // ????????????????????
+            bleSingleton.leHandler!!.sendMessage(msg)
         }
         if (device != null) {
-            val conn = mBLE!!.connect(device!!.address)
+            val conn = bleSingleton.mBLEClass!!.connect(device!!.address)
             if (conn) {
-                mIsConnected = true
-                mCurrentDevice = device
+                bleSingleton.mIsConnected = true
+                bleSingleton.mCurrentDevice = device
             }
         }
     }
 
     fun isConnected(): Boolean {
-        return mIsConnected
+        return bleSingleton.mIsConnected
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun sendCommand(command:String): Boolean {
-        val ch: BluetoothGattCharacteristic? = characteristicForProperty(BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE)
-        if (ch != null) {
-            ch.setValue(command)
-            Log.d("hejsan","mBLE null? " + (mBLE == null).toString())
-            mBLE!!.writeCharacteristic(ch)
-            return true
-        }
-        return false
+
+        Log.d("hejsan","mBLE null? " + (bleSingleton.mBLEClass == null).toString())
+        var result = bleSingleton.mBLEClass!!.writeCharacteristic(command)
+        return result
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    private fun characteristicForProperty(property: Int): BluetoothGattCharacteristic? {
-        return BluetoothGattCharacteristic(UUID.fromString(UUID_WRITE_CHARACTERISTIC),8,16)
+    private fun characteristicForProperty(): BluetoothGattCharacteristic? {
+        return BluetoothGattCharacteristic(UUID.fromString(bleSingleton.UUID_WRITE_CHARACTERISTIC),8,16)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
-        return null
+        return binder
+    }
+
+    inner class Localbinder : Binder() {
+        fun getService() :BluetoothLE {
+            return this@BluetoothLE
+        }
     }
 }

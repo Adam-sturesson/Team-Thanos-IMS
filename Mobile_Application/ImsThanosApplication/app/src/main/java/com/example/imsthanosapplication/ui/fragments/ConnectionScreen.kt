@@ -13,10 +13,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.replace
-import com.example.imsthanosapplication.BTObject
-import com.example.imsthanosapplication.BluetoothHandler
-import com.example.imsthanosapplication.BluetoothLE
-import com.example.imsthanosapplication.R
+import com.example.imsthanosapplication.*
 
 
 /**
@@ -25,7 +22,7 @@ import com.example.imsthanosapplication.R
  * create an instance of this fragment.
  */
 class ConnectionScreen : Fragment(R.layout.fragment_connection_screen) {
-    var ble : BluetoothLE? = null
+    var ble : BluetoothLE? = BluetoothLE()
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,13 +39,11 @@ class ConnectionScreen : Fragment(R.layout.fragment_connection_screen) {
                 view.findViewById<TextView>(R.id.errorTV).text = getString(R.string.tryAgain)
             }
         }
-        ble = BluetoothLE().sharedManager()
-
         view.findViewById<Button>(R.id.connectBTN).setOnClickListener {
-            if (ble != null) {
+            if (bleSingleton.mBle != null) {
                 timer.start()
-                ble!!.setup(requireContext())
-                ble!!.selectDevice()
+                bleSingleton.mBle!!.setup(requireContext())
+                bleSingleton.mBle!!.selectDevice()
                 Log.d("hejsan", "pressed button connect " + ble!!.isConnected().toString())
             }
         }

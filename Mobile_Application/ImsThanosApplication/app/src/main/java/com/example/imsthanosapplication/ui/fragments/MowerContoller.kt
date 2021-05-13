@@ -12,9 +12,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import androidx.annotation.RequiresApi
-import com.example.imsthanosapplication.BluetoothHandler
 import com.example.imsthanosapplication.BluetoothLE
 import com.example.imsthanosapplication.R
+import com.example.imsthanosapplication.bleSingleton
 
 class MowerContoller : Fragment(R.layout.fragment_mower_contoller) {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -25,14 +25,9 @@ class MowerContoller : Fragment(R.layout.fragment_mower_contoller) {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_mower_contoller, container, false)
-        /*  Handler().postDelayed({
-         //   btMessenger = BluetoothMessageThread(m_bluetoothSocket!!)
-            btMessenger!!.start()
-        }, 3000)
-        */
 
-        val ble : BluetoothLE? = BluetoothLE().sharedManager()
-         //connection.execute()
+
+        val ble : BluetoothLE? = bleSingleton.mBle
 
         val manualDrivingButton = view.findViewById<Button>(R.id.manualDriving_button)
         manualDrivingButton.setOnClickListener {
@@ -45,8 +40,9 @@ class MowerContoller : Fragment(R.layout.fragment_mower_contoller) {
         val autnomousDrivingButton = view.findViewById<Button>(R.id.autnomousDriving_button)
         autnomousDrivingButton.setOnClickListener {
             //Change color maybe in future
-            Log.d("helpme", "auto")
-            //connection.sendCommand(getString(R.string.autonomousDriving))
+            if (ble != null) {
+                ble.sendCommand(getString(R.string.autonomousDriving))
+            }
         }
 
         val forwardButton = view.findViewById<ImageButton>(R.id.forward_button)
@@ -56,7 +52,7 @@ class MowerContoller : Fragment(R.layout.fragment_mower_contoller) {
                 when (event?.action) {
                     MotionEvent.ACTION_DOWN -> {
                         if (ble != null) {
-                            Log.d("hejsan","forward good ? " + ble.sendCommand(getString(R.string.forward)).toString())
+                            ble.sendCommand(getString(R.string.forward))
                         }
                     }
 

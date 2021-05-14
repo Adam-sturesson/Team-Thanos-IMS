@@ -102,7 +102,7 @@ void motorPositionInterrupt()
 }
 
 int getDistance(){
-    return (((-1*Encoder_1.getCurPos()) + Encoder_2.getCurPos())/2)/360;
+    return (((-1*Encoder_1.getCurPos()) + Encoder_2.getCurPos())/2)*PI*WHEEL_RADIUS/180;
 }
 
 void resetDistance(){
@@ -194,6 +194,7 @@ int gyroRun(){
 /*
   Global variables related to Bluetooth.
 */
+  MeSerial RPI_serial(PORT_5);
 
 /*
   Bluetooth functions.
@@ -229,6 +230,10 @@ bool bluetoothReceive(){
 
 void bluetoothTransmitt(String data){}
 
+void rpiSerialSetup(){
+  RPI_serial.begin(9600);
+}
+
 /*
 ------------------------------------------------------------------------------------------
 --------------------------------------Mower behavoir related -----------------------------
@@ -240,6 +245,7 @@ void bluetoothTransmitt(String data){}
 */
 
 int turningTimes[5]={500,750,1000,1250,1500};
+
 
 /*
   Mower behavoir functions.
@@ -346,7 +352,7 @@ void drivingLoop1()
   }
 }
 */
-
+bool obs =false;
 void drivingLoop(){
   
   switch (mower.state)
@@ -367,6 +373,8 @@ void drivingLoop(){
     if (detectedLine()==true){
       mower.state = SET_BACKWARDS;
       mower.turning_stage=TURN_OFF;
+
+      
     }
     else
       mower.state = CHECK_OBSTACLE;
@@ -376,6 +384,9 @@ void drivingLoop(){
     if (detectedObstacal(5)){
       mower.state = SET_BACKWARDS;
       mower.turning_stage=TURN_OFF;
+
+      obs=true;
+      
     }
     else if(mower.turning_stage!=TURN_OFF){
       mower.state=mower.turning_stage;
@@ -388,6 +399,7 @@ void drivingLoop(){
     break;  
 
   case SET_FORWARDS: // drive forward.
+
     moveSetup(FORWARDS, SPEED);
     mower.state = DRIVE;
     break;
@@ -397,6 +409,17 @@ void drivingLoop(){
       mower.turning_stage=SET_BACKWARDS;
       mower.wait_until_ms=millis()+TURN_BACK_TIME;
       moveSetup(BACKWARDS,SPEED);
+
+      String s="";
+      mower.distance=getDistance();
+      if(obs==true){
+        s="1";
+        obs=false;
+      }
+      else{
+        s="0";
+      }
+      Serial.println(String(mower.distance)+"."+String(mower.angle)+"."+s);
     }
 
     if(millis()<mower.wait_until_ms)
@@ -429,6 +452,9 @@ void drivingLoop(){
     else{
       mower.state=IDEAL;
       mower.turning_stage=TURN_OFF;
+
+      mower.angle=gyroRun();
+      resetDistance();
     }
       
     break;

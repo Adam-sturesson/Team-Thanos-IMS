@@ -43,6 +43,8 @@
 #define RIGHT              4
 #define SPEED              40
 
+#define WHEEL_RADIUS        2
+
 
 struct MowerIndicators{
     bool mode                   =AUTO; // auto or man
@@ -183,6 +185,8 @@ bool bluetoothReceive();
 
 */ 
 void bluetoothTransmitt(String data);
+
+void rpiSerialSetup();
 
 /*
                                                 MOWER BEHAVIOUR

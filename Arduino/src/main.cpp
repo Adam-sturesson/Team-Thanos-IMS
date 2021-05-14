@@ -26,6 +26,7 @@ void setup() {
         motorPositionInterrupt();
         Serial.begin(115200);
         gyroSetup();
+        rpiSerialSetup();
         
 
 }

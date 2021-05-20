@@ -24,8 +24,10 @@ while True:
     
     decodedMessages = RD.decode("utf-8") #Convert messages.
     pastMessages = " "
-
-    decodedMessages = "m.120.10"
+#m.angle.distance.obstacle
+#    decodedMessages = "m.120.10.1"
+    #print(decodedMessages[0])
+    print(decodedMessages)
     if decodedMessages[0] == 'm':
         if decodedMessages == pastMessages:
             #Do nothing since the values are the same.
@@ -33,10 +35,9 @@ while True:
             
         else:
             pastMessages = decodedMessages
-            values = decodedMessages.split(".",2) #splits messages and put into list.
+            values = decodedMessages.split(".",3) #splits messages and put into list.
             
             if values:
-                print("hahahahaha")
                 for x in range(len(values)):
                     print(values[x])
             else:

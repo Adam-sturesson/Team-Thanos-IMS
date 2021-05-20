@@ -106,8 +106,8 @@ int getDistance(){
 }
 
 void resetDistance(){
-  Encoder_1.setPulsePos(0);
-  Encoder_2.setPulsePos(0);
+    Encoder_1.setPulsePos(0);
+    Encoder_2.setPulsePos(0);
 }
 
 /*
@@ -177,12 +177,12 @@ MeGyro gyro(0,0x69);
 */
 
 void gyroSetup(){
-  gyro.begin();
+    gyro.begin();
 }
 
 int gyroRun(){
-  gyro.update();
-  return gyro.getAngle(3);
+    gyro.update();
+    return gyro.getAngle(3);
 }
 
 /*
@@ -192,289 +192,173 @@ int gyroRun(){
 */
 
 /*
-  Global variables related to Bluetooth.
+* Global variables related to Bluetooth.
 */
   MeSerial RPI_serial(PORT_5);
 
 /*
-  Bluetooth functions.
+* Bluetooth functions.
 */
 
 bool bluetoothReceive(){
-  char receivedCommand;
-  bool flag=false;
+    char receivedCommand;
+    bool flag=false;
   
-  if(Serial.available()>0){
-    receivedCommand=Serial.read();
-    flag=true;
-  }
-  if(flag){
-    if(receivedCommand=='m')//anualDriving
-      mower.mode=MANUAL;
-    else if(receivedCommand=='a')//utoDriving
-      mower.mode=AUTO;
-    else if(receivedCommand=='f')//orward
-      mower.direction=1;
-    else if(receivedCommand=='b')//ackward
-      mower.direction=2;
-    else if(receivedCommand=='l')//eft
-      mower.direction=3;
-    else if(receivedCommand=='r')//ight
-      mower.direction=4;
-    else if(receivedCommand=='s')//top
-      mower.direction=0;
-  }
-
-  return mower.mode;
+    if(Serial.available()>0){
+        receivedCommand=Serial.read();
+        flag=true;
+    }
+    if(flag){
+        if(receivedCommand=='m')//anualDriving
+            mower.mode=MANUAL;
+        else if(receivedCommand=='a')//utoDriving
+            mower.mode=AUTO;
+        else if(receivedCommand=='f')//orward
+            mower.direction=1;
+        else if(receivedCommand=='b')//ackward
+            mower.direction=2;
+        else if(receivedCommand=='l')//eft
+            mower.direction=3;
+        else if(receivedCommand=='r')//ight
+            mower.direction=4;
+        else if(receivedCommand=='s')//top
+            mower.direction=0;
+    }
+    return mower.mode;
 }
 
 void bluetoothTransmitt(String data){}
 
 void rpiSerialSetup(){
-  RPI_serial.begin(9600);
+    RPI_serial.begin(9600);
 }
 
 /*
 ------------------------------------------------------------------------------------------
---------------------------------------Mower behavoir related -----------------------------
+------------------------------------- Mower behaviour related -----------------------------
 ------------------------------------------------------------------------------------------
 */
 
 /*
-  Global variables related to Mower behavoir.
+* Global variables related to Mower behaviour.
 */
 
 int turningTimes[5]={500,750,1000,1250,1500};
-
+bool obs = false;
 
 /*
-  Mower behavoir functions.
+* Mower behaviour functions.
 */
-/*
-void drivingLoop1()
-{
-  
-  switch (mower.state)
-  {
-  case IDEAL: //check for driving mode, auto defaulte.
-    if(bluetoothReceive())
-      mower.state=MANUEL;
-    else
-      mower.state=BOUNDARY_CHECK;
-    break;
 
-  case MANUEL: // get direction from bluetooth.
-    if(bluetoothReceive()){
+void drivingLoop(){  
+    switch (mower.state){
+    case IDEAL: //check for driving mode, auto defaulte.
+      if(bluetoothReceive()==MANUAL)
+          mower.state=UPDATE_BT_COM;
+      else
+          mower.state=CHECK_BOUNDARY;
+      break;
+
+    case UPDATE_BT_COM: // get direction from bluetooth.
       moveSetup(mower.direction,SPEED);
-      drive();
-      mower.state=MANUEL;
-    }
-    else
-      mower.state= BOUNDARY_CHECK;
-    break;
+      mower.state=DRIVE;
+      break;
 
-  case BOUNDARY_CHECK: //check for the boundary line.
-    if (detectedLine())
-      mower.state = TURN_FROM_BOUNDARY;
-    else
-      mower.state = OBSTICALS_CHECK;
-    break;
-
-  case OBSTICALS_CHECK: //check for the line.
-    if (detectedObstacal(5))
-      mower.state = TURN_FROM_OBSTACAL;
-    else
-      mower.state = DRIVE_FORWARD;
-    break;  
-
-  case DRIVE_FORWARD: // drive forward.
-    
-    moveSetup(FORWARDS, SPEED);
-    drive();
-    // delay?
-    mower.state = IDEAL; // check again, or maybe set an interrupt for line sensor?
-    break;
-
-  case TURN_FROM_BOUNDARY: // turn from the line
-    mower.distance=getDistance();
-    
-    Serial.println("ang : " + String(mower.angle) + " dis : " + String(mower.distance));
-    
-    // stop
-    moveSetup(STOP, 0);
-    delayAndDO(0.2, drive);
-    //back
-    moveSetup(BACKWARDS, SPEED);
-    delayAndDO(0.5, drive);
-    //stop
-    moveSetup(STOP, 0);
-    delayAndDO(0.2, drive);
-    //random returns 3 or 4 meaning left or right
-    moveSetup(random(3,5), SPEED);
-    delayAndDO(random(5,15)/10.0, drive);
-
-    mower.angle=gyroRun();
-    resetDistance();
-
-    mower.state = IDEAL;
-    break;
-  case TURN_FROM_OBSTACAL: // turn from the line
-    mower.distance=getDistance();
-
-    Serial.println("ang : " + String(mower.angle) + " dis : " + String(mower.distance));
-
-    // stop
-    moveSetup(STOP, 0);
-    delayAndDO(0.2, drive);
-    //back
-    moveSetup(BACKWARDS, SPEED);
-    delayAndDO(0.5, drive);
-    //stop
-    moveSetup(STOP, 0);
-    delayAndDO(0.2, drive);
-    //random returns 3 or 4 meaning left or right
-    moveSetup(random(3,5), SPEED);
-    delayAndDO(random(5,15)/10.0, drive);
-    
-    mower.angle=gyroRun();
-    resetDistance();
-    
-    mower.state = IDEAL;
-    break;
-
-
-  default:
-    moveSetup(STOP, 0);
-    mower.state=IDEAL;
-    //_delay(0.5,drive);
-    // what to do in case program ended up here
-    break;
-  }
-}
-*/
-bool obs =false;
-void drivingLoop(){
-  
-  switch (mower.state)
-  {
-  case IDEAL: //check for driving mode, auto defaulte.
-    if(bluetoothReceive()==MANUAL)
-      mower.state=UPDATE_BT_COM;
-    else
-      mower.state=CHECK_BOUNDARY;
-    break;
-
-  case UPDATE_BT_COM: // get direction from bluetooth.
-    moveSetup(mower.direction,SPEED);
-    mower.state=DRIVE;
-    break;
-
-  case CHECK_BOUNDARY: //check for the boundary line.
-    if (detectedLine()==true){
-      mower.state = SET_BACKWARDS;
-      mower.turning_stage=TURN_OFF;
-
-      
-    }
-    else
-      mower.state = CHECK_OBSTACLE;
-    break;
-
-  case CHECK_OBSTACLE: //check for the line.
-    if (detectedObstacal(5)){
-      mower.state = SET_BACKWARDS;
-      mower.turning_stage=TURN_OFF;
-
-      obs=true;
-      
-    }
-    else if(mower.turning_stage!=TURN_OFF){
-      mower.state=mower.turning_stage;
-    }
-      
-    else{
-      mower.state = SET_FORWARDS;
-    }
-      
-    break;  
-
-  case SET_FORWARDS: // drive forward.
-
-    moveSetup(FORWARDS, SPEED);
-    mower.state = DRIVE;
-    break;
-
-  case SET_BACKWARDS:
-    if(mower.turning_stage==TURN_OFF){
-      mower.turning_stage=SET_BACKWARDS;
-      mower.wait_until_ms=millis()+TURN_BACK_TIME;
-      moveSetup(BACKWARDS,SPEED);
-
-      String s="";
-      mower.distance=getDistance();
-      if(obs==true){
-        s="1";
-        obs=false;
+    case CHECK_BOUNDARY: //check for the boundary line.
+      if (detectedLine()==true){
+          mower.state = SET_BACKWARDS;
+          mower.turning_stage=TURN_OFF;      
       }
+      else
+        mower.state = CHECK_OBSTACLE;
+      break;
+
+    case CHECK_OBSTACLE: //check for the line.
+      if (detectedObstacal(5)){
+          mower.state = SET_BACKWARDS;
+          mower.turning_stage=TURN_OFF;
+          obs=true;      
+      }
+      else if(mower.turning_stage!=TURN_OFF){
+          mower.state=mower.turning_stage;
+      }      
       else{
-        s="0";
+          mower.state = SET_FORWARDS;
+      }      
+      break;  
+
+    case SET_FORWARDS: // drive forward.
+      moveSetup(FORWARDS, SPEED);
+      mower.state = DRIVE;
+      break;
+
+    case SET_BACKWARDS:
+      if(mower.turning_stage==TURN_OFF){
+          mower.turning_stage=SET_BACKWARDS;
+          mower.wait_until_ms=millis()+TURN_BACK_TIME;
+          moveSetup(BACKWARDS,SPEED);
+
+          String s="";
+          mower.distance=getDistance();
+          if(obs==true){
+              s="1";
+              obs=false;
+          }
+          else{
+              s="0";
+          }
+          Serial.println(String(mower.distance)+"."+String(mower.angle)+"."+s);
       }
-      Serial.println(String(mower.distance)+"."+String(mower.angle)+"."+s);
-    }
 
-    if(millis()<mower.wait_until_ms)
-      mower.state=DRIVE;
-    else
-      mower.state=SET_STOP;
-    break;
+      if(millis()<mower.wait_until_ms)
+          mower.state=DRIVE;
+      else
+          mower.state=SET_STOP;
+      break;
 
-  case SET_STOP:
-    if(mower.turning_stage==SET_BACKWARDS){
-      mower.turning_stage=SET_STOP;
-      mower.wait_until_ms=millis()+TURN_STOP_TIME;
-      moveSetup(STOP,0);
-    }
-    if(millis()<mower.wait_until_ms)
-      mower.state=DRIVE;
-    else
-      mower.state=SET_RIGHT_LEFT;
-    break;
+    case SET_STOP:
+      if(mower.turning_stage==SET_BACKWARDS){
+          mower.turning_stage=SET_STOP;
+          mower.wait_until_ms=millis()+TURN_STOP_TIME;
+          moveSetup(STOP,0);
+      }
+      if(millis()<mower.wait_until_ms)
+          mower.state=DRIVE;
+      else
+          mower.state=SET_RIGHT_LEFT;
+      break;
 
-  case SET_RIGHT_LEFT:
-    if(mower.turning_stage==SET_STOP){
-      mower.turning_stage=SET_RIGHT_LEFT;
-      mower.wait_until_ms=millis()+randomTurningTime();
-      //returns 3 or 4 meaning left or right.
-      moveSetup(random(3,5),SPEED);
-    }
-    if(millis()<mower.wait_until_ms)
-      mower.state=DRIVE;
-    else{
-      mower.state=IDEAL;
-      mower.turning_stage=TURN_OFF;
-
-      mower.angle=gyroRun();
-      resetDistance();
-    }
-      
-    break;
+    case SET_RIGHT_LEFT:
+      if(mower.turning_stage==SET_STOP){
+          mower.turning_stage=SET_RIGHT_LEFT;
+          mower.wait_until_ms=millis()+randomTurningTime();
+          //returns 3 or 4 meaning left or right.
+          moveSetup(random(3,5),SPEED);
+      }
+      if(millis()<mower.wait_until_ms)
+          mower.state=DRIVE;
+      else{
+          mower.state=IDEAL;
+          mower.turning_stage=TURN_OFF;
+          mower.angle=gyroRun();
+          resetDistance();
+      }      
+      break;
 
     case DRIVE:
-    drive();
-    mower.state=IDEAL;
-    break;
+      drive();
+      mower.state=IDEAL;
+      break;
 
-
-  default:
-    moveSetup(STOP, 0);
-    mower.state=IDEAL;
-    break;
-  }
+    default:
+      moveSetup(STOP, 0);
+      mower.state=IDEAL;
+      break;
+    }
 }
-void delayAndDO(float seconds, void (*func)(void))
-{
-    if (seconds < 0.0)
-    {
+
+void delayAndDO(float seconds, void (*func)(void)){
+    if (seconds < 0.0){
         seconds = 0.0;
     }
     unsigned long endTime = millis() + seconds * 1000;
@@ -483,5 +367,5 @@ void delayAndDO(float seconds, void (*func)(void))
 }
 
 int randomTurningTime(){
-  return turningTimes[random(0,5)];
+    return turningTimes[random(0,5)];
 }

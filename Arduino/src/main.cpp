@@ -2,13 +2,6 @@
 #include "MowerLib.h"
 
 
-/* Defines */
-
-
-/* Global variables */
-
-
-
 /* Program setup */
  
 void setup() {
@@ -27,15 +20,10 @@ void setup() {
         Serial.begin(115200);
         gyroSetup();
         rpiSerialSetup();
-        
-
 }
 
 /* Program loop */
 
 void loop() {
-        
     drivingLoop();
-
-
 }

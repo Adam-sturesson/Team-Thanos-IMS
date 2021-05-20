@@ -5,17 +5,6 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <SoftwareSerial.h>
-/*
-#define BOUNDARY_CHECK      10
-#define DRIVE_FORWARD       1
-#define TURN_FROM_BOUNDARY  2
-#define OBSTICALS_CHECK     3
-#define TURN_FROM_OBSTACAL  4
-#define MANUEL              5
-#define AUTO                6
-#define IDEAL               7
-#define RECEIVE_BT          8
-*/
 
 #define IDEAL               0
 #define UPDATE_BT_COM       1
@@ -36,26 +25,26 @@
 #define TURN_STOP_TIME      500
 #define TURN_R_L_TIME       500
 
-#define STOP               0
-#define FORWARDS           1
-#define BACKWARDS          2
-#define LEFT               3
-#define RIGHT              4
-#define SPEED              40
+#define STOP                0
+#define FORWARDS            1
+#define BACKWARDS           2
+#define LEFT                3
+#define RIGHT               4
+#define SPEED               40
 
 #define WHEEL_RADIUS        2
 
 
 struct MowerIndicators{
-    bool mode                   =AUTO; // auto or man
-    int speed                   =SPEED; 
-    int direction               =STOP;
-    int state                   =IDEAL;
-    int angle                   =0;
-    int distance                =0;
-    int turning_stage           =TURN_OFF;
-    unsigned long wait_until_ms =0;
-    int turn_l_r_wait           =0;
+    bool mode                    = AUTO; // auto or man
+    int speed                    = SPEED;
+    int direction                = STOP;
+    int state                    = IDEAL;
+    int angle                    = 0;
+    int distance                 = 0;
+    int turning_stage            = TURN_OFF;
+    unsigned long wait_until_ms  = 0;
+    int turn_l_r_wait            = 0;
 };
 
 /*
@@ -72,8 +61,7 @@ struct MowerIndicators{
 
 * @param   speed        a procentage that indicate the motor speed.
 
-*/ 
-
+*/
 void moveSetup(int direction, int speed);
 
 /** 
@@ -83,8 +71,7 @@ void moveSetup(int direction, int speed);
    deliverd by the manufacturer,
    runs respective motor according setup no more than 1 time every 40 ms.
 
-*/ 
-
+*/
 void drive();
 
 /** 
@@ -186,6 +173,11 @@ bool bluetoothReceive();
 */ 
 void bluetoothTransmitt(String data);
 
+/** 
+
+* Executes a SoftwareSerial.begin() function with 9600 baudrate.
+
+*/ 
 void rpiSerialSetup();
 
 /*

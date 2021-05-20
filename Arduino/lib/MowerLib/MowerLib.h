@@ -45,6 +45,10 @@ struct MowerIndicators{
     int turning_stage            = TURN_OFF;
     unsigned long wait_until_ms  = 0;
     int turn_l_r_wait            = 0;
+
+    int previousTurn             =RIGHT;
+    bool obsticalDetected        =false;
+    bool boundaryDetected        =false;
 };
 
 /*

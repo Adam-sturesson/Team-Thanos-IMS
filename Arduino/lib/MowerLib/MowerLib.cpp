@@ -230,7 +230,7 @@ bool bluetoothReceive(){
 void bluetoothTransmitt(String data){}
 
 void rpiSerialSetup(){
-    RPI_serial.begin(9600);
+    RPI_serial.begin(115200);
 }
 
 /*
@@ -244,7 +244,7 @@ void rpiSerialSetup(){
 */
 
 int turningTimes[5]={500,750,1000,1250,1500};
-bool obs = false;
+
 
 /*
 * Mower behaviour functions.
@@ -265,25 +265,30 @@ void drivingLoop(){
       break;
 
     case CHECK_BOUNDARY: //check for the boundary line.
-      if (detectedLine()==true){
+      if (detectedLine()==true&&mower.boundaryDetected==false){
           mower.state = SET_BACKWARDS;
-          mower.turning_stage=TURN_OFF;      
+          mower.turning_stage=TURN_OFF;
+          mower.boundaryDetected=true;      
       }
-      else
-        mower.state = CHECK_OBSTACLE;
+      else{
+          mower.state = CHECK_OBSTACLE;
+         
+      }
+        
       break;
 
     case CHECK_OBSTACLE: //check for the line.
-      if (detectedObstacal(5)){
+      if (detectedObstacal(5)&&mower.obsticalDetected==false){
           mower.state = SET_BACKWARDS;
           mower.turning_stage=TURN_OFF;
-          obs=true;      
+          mower.obsticalDetected=true;      
       }
       else if(mower.turning_stage!=TURN_OFF){
           mower.state=mower.turning_stage;
       }      
       else{
           mower.state = SET_FORWARDS;
+          mower.obsticalDetected=false;
       }      
       break;  
 
@@ -298,16 +303,15 @@ void drivingLoop(){
           mower.wait_until_ms=millis()+TURN_BACK_TIME;
           moveSetup(BACKWARDS,SPEED);
 
-          String s="";
           mower.distance=getDistance();
-          if(obs==true){
-              s="1";
-              obs=false;
+
+          if(mower.obsticalDetected==true){
+              RPI_serial.println("m."+String(mower.angle)+"."+String(mower.distance)+".1");
           }
-          else{
-              s="0";
+          if(mower.boundaryDetected){
+              RPI_serial.println("m."+String(mower.angle)+"."+String(mower.distance)+".0");
           }
-          Serial.println(String(mower.distance)+"."+String(mower.angle)+"."+s);
+          
       }
 
       if(millis()<mower.wait_until_ms)
@@ -321,6 +325,7 @@ void drivingLoop(){
           mower.turning_stage=SET_STOP;
           mower.wait_until_ms=millis()+TURN_STOP_TIME;
           moveSetup(STOP,0);
+           mower.boundaryDetected=false;
       }
       if(millis()<mower.wait_until_ms)
           mower.state=DRIVE;
@@ -333,7 +338,8 @@ void drivingLoop(){
           mower.turning_stage=SET_RIGHT_LEFT;
           mower.wait_until_ms=millis()+randomTurningTime();
           //returns 3 or 4 meaning left or right.
-          moveSetup(random(3,5),SPEED);
+          moveSetup(random(3,5),SPEED);//(7-mower.previousTurn) // each other right and left.
+          //mower.previousTurn=7-mower.previousTurn;
       }
       if(millis()<mower.wait_until_ms)
           mower.state=DRIVE;

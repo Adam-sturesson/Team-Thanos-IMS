@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "849916827692",
-    "firebase_url": "https://imsystem-46381-default-rtdb.europe-west1.firebasedatabase.app",
-    "project_id": "imsystem-46381",
-    "storage_bucket": "imsystem-46381.appspot.com"
+    "project_number": "493184264669",
+    "firebase_url": "https://ims-thanos-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "ims-thanos",
+    "storage_bucket": "ims-thanos.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:849916827692:android:87fb46fd3afcfe3bf71989",
+        "mobilesdk_app_id": "1:493184264669:android:3345d6c73a3d94add66e34",
         "android_client_info": {
           "package_name": "com.example.imsthanosapplication"
         }
       },
       "oauth_client": [
         {
-          "client_id": "849916827692-dsclh90qu19e3ems7eccs2jnsk1biq7u.apps.googleusercontent.com",
+          "client_id": "493184264669-82b669b1vik341elqee9ib78422mv3rv.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBEn2gDaO1NqKI5EZzoSCYp4F-nYGau750"
+          "current_key": "AIzaSyCpUwVwIs_di6-ofw7zW5rQxMIic69oeqA"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "849916827692-dsclh90qu19e3ems7eccs2jnsk1biq7u.apps.googleusercontent.com",
+              "client_id": "493184264669-82b669b1vik341elqee9ib78422mv3rv.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

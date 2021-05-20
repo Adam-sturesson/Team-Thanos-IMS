@@ -42,15 +42,12 @@ class CanvasActivity() : AppCompatActivity() {
         Log.d(TAG, database.toString())
         Log.d(TAG, database.get().toString())
 
-        
+
 
         database.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 Log.d(TAG,"Exists1")
-
-
-
                 if (snapshot.exists()) {
                     Log.d(TAG,"Exists")
                     val data = snapshot.child("Routes").children
@@ -58,7 +55,6 @@ class CanvasActivity() : AppCompatActivity() {
                     data.forEach {
                         Log.d(TAG, "hilloooo")
                         Log.d(TAG, it.toString())
-
                         PathObject.startPoint = Point(PathObject.width/2,PathObject.height/2)
                         PathObject.addPoint(PathObject.startPoint)
                         val mowPos = it.getValue(MowerPosition::class.java)

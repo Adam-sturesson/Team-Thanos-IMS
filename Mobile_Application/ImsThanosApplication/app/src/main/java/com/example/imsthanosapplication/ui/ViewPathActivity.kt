@@ -33,25 +33,21 @@ class CanvasActivity() : AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         PathObject.height = displayMetrics.heightPixels
         PathObject.width = displayMetrics.widthPixels
-        var imageV = findViewById<ImageView>(R.id.imageV)
+        var imageV = findViewById<ImageView>(R.id.path_imageView)
         val bitmap: Bitmap =
             Bitmap.createBitmap(PathObject.width, PathObject.height, Bitmap.Config.ARGB_8888)
 
 
         var database = FirebaseDatabase.getInstance().reference
-
         Log.d(TAG, database.toString())
         Log.d(TAG, database.get().toString())
-
-
-
         database.addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 Log.d(TAG,"Exists1")
                 if (snapshot.exists()) {
                     Log.d(TAG,"Exists")
-                    val data = snapshot.child("Routes").children
+                    val data = snapshot.child("Routes").child("Thu May 20 14:40:45 2021").child("mowerPositions").children
 
                     data.forEach {
                         Log.d(TAG, "hilloooo")
@@ -75,10 +71,7 @@ class CanvasActivity() : AppCompatActivity() {
                 Log.d(TAG,"Canceld")
             }
         })
-
-
-}
-
+    }
 
 
     data class MowerPosition(

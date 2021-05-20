@@ -306,10 +306,10 @@ void drivingLoop(){
           mower.distance=getDistance();
 
           if(mower.obsticalDetected==true){
-              RPI_serial.println("m."+String(mower.angle)+"."+String(mower.distance)+".1");
+              RPI_serial.println("m."+String(mower.angle)+"."+String(mower.distance)+".1.");
           }
           if(mower.boundaryDetected){
-              RPI_serial.println("m."+String(mower.angle)+"."+String(mower.distance)+".0");
+              RPI_serial.println("m."+String(mower.angle)+"."+String(mower.distance)+".0.");
           }
           
       }

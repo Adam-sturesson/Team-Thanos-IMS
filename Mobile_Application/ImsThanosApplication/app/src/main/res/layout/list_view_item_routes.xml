@@ -1,0 +1,23 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="5dp"
+        android:background="@color/white"
+        android:elevation="5dp"
+        >
+        <TextView
+            android:id="@+id/routeItem_textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="5dp"
+            android:textStyle="bold"
+            android:textColor="@color/purple_700"
+        />
+    </LinearLayout>
+</FrameLayout>

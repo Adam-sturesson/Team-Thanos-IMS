@@ -1,10 +1,19 @@
 <resources>
     <string name="app_name">Mower Application</string>
-    <string name="manualDriving">Manual</string>
-    <string name="autonomousDriving">Autonomous</string>
-    <string name="stop">stop</string>
-    <string name="forward">forward</string>
-    <string name="right">right</string>
-    <string name="left">left</string>
-    <string name="backward">backward</string>
+    <string name="manualDriving">m</string>
+    <string name="autonomousDriving">a</string>
+    <string name="stop">s</string>
+    <string name="forward">f</string>
+    <string name="right">r</string>
+    <string name="left">l</string>
+    <string name="backward">b</string>
+    <string name="mowerController">Control Mower</string>
+    <string name="mowerPath">See path</string>
+    <string name="tryAgain">Please try again</string>
+    <string name="connectScreen">Connect/Disconnect to mower</string>
+    <string name="pleaseConnectToMower">Please connect to mower</string>
+    <string name="startRoute">Start route</string>
+    <string name="stopRoute">Stop route</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

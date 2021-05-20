@@ -7,18 +7,13 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
-import com.google.firebase.ktx.Firebase
-import com.example.imsthanosapplication.data.DatabaseHandler
 
 
-class TestData {
+class PathCompanion {
     companion object {
-        var testPath: MutableList<Point> = mutableListOf()
+        var listOfPoints: MutableList<Point> = mutableListOf()
     }
 }
 
@@ -27,15 +22,14 @@ class CanvasActivity() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_canvas)
-
+        val id = intent.getStringExtra("routeID")
         val displayMetrics = DisplayMetrics()
 
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         PathObject.height = displayMetrics.heightPixels
         PathObject.width = displayMetrics.widthPixels
         var imageV = findViewById<ImageView>(R.id.path_imageView)
-        val bitmap: Bitmap =
-            Bitmap.createBitmap(PathObject.width, PathObject.height, Bitmap.Config.ARGB_8888)
+        val bitmap: Bitmap = Bitmap.createBitmap(PathObject.width, PathObject.height, Bitmap.Config.ARGB_8888)
 
 
         var database = FirebaseDatabase.getInstance().reference
@@ -47,7 +41,7 @@ class CanvasActivity() : AppCompatActivity() {
                 Log.d(TAG,"Exists1")
                 if (snapshot.exists()) {
                     Log.d(TAG,"Exists")
-                    val data = snapshot.child("Routes").child("Thu May 20 14:40:45 2021").child("mowerPositions").children
+                    val data = snapshot.child("Routes").child(id!!).child("mowerPositions").children
 
                     data.forEach {
                         Log.d(TAG, "hilloooo")
@@ -57,7 +51,7 @@ class CanvasActivity() : AppCompatActivity() {
                         val mowPos = it.getValue(MowerPosition::class.java)
                         val x = mowPos!!.x
                         val y = mowPos!!.y
-                        TestData.testPath.add(Point(x.hashCode(), y.hashCode()))
+                        PathCompanion.listOfPoints.add(Point(x.hashCode(), y.hashCode()))
                         PathObject.drawPath(bitmap)
                         imageV.background = BitmapDrawable(resources, bitmap)
                     }
@@ -73,6 +67,13 @@ class CanvasActivity() : AppCompatActivity() {
         })
     }
 
+
+    override fun onDestroy() {
+      
+
+        super.onDestroy()
+        PathCompanion.listOfPoints.clear()
+    }
 
     data class MowerPosition(
         var x: Int? = null,

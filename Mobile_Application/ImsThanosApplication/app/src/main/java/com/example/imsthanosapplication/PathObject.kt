@@ -18,9 +18,9 @@ object PathObject {
         val canvas = Canvas(bitmap)
         var shapeDrawable: ShapeDrawable
         var path = Path()
-        for (i in 0..TestData.testPath.size - 2){
-            path.moveTo(TestData.testPath[i].x.toFloat(), TestData.testPath[i].y.toFloat())
-            path.lineTo(TestData.testPath[i+1].x.toFloat(), TestData.testPath[i+1].y.toFloat())
+        for (i in 0..PathCompanion.listOfPoints.size - 2){
+            path.moveTo(PathCompanion.listOfPoints[i].x.toFloat(), PathCompanion.listOfPoints[i].y.toFloat())
+            path.lineTo(PathCompanion.listOfPoints[i+1].x.toFloat(), PathCompanion.listOfPoints[i+1].y.toFloat())
         }
 
         var pathShape = PathShape(path,this.width.toFloat(),this.height.toFloat())

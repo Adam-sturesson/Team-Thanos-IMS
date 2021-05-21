@@ -3,7 +3,6 @@ package com.example.imsthanosapplication.ui
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Build
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,9 +15,7 @@ import android.widget.ImageButton
 import androidx.annotation.RequiresApi
 import com.example.imsthanosapplication.BluetoothLE
 import android.widget.TextView
-import com.example.imsthanosapplication.BTObject
 import android.widget.Switch
-import com.example.imsthanosapplication.BluetoothHandler
 import com.example.imsthanosapplication.R
 import com.example.imsthanosapplication.bleSingleton
 
@@ -59,10 +56,15 @@ class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
         startRouteSwitch.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
                 startRouteSwitch.text = resources.getString(R.string.stopRoute)
-                // write here the code send the data command
+                if(ble != null) {
+                    ble.sendCommand("p")
+                }
+
             }else{
                 startRouteSwitch.text = resources.getString(R.string.startRoute)
-                // write here the code send the data command
+                if(ble != null) {
+                    ble.sendCommand("d")
+                }
 
             }
         }

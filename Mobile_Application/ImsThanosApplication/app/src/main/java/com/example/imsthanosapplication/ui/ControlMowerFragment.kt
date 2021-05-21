@@ -59,10 +59,18 @@ class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
         startRouteSwitch.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
                 startRouteSwitch.text = resources.getString(R.string.stopRoute)
-                // write here the code send the data command
+                Log.d("hejsan", "STARTED ROUTE")
+                if (ble != null) {
+                    var resault = ble.sendCommand("p")
+                    Log.d("hejsan","Did it send:" + resault.toString())
+                }
             }else{
                 startRouteSwitch.text = resources.getString(R.string.startRoute)
-                // write here the code send the data command
+                Log.d("hejsan", "STARTED ROUTE")
+                if (ble != null) {
+                    var resault = ble.sendCommand("d")
+                    Log.d("hejsan","Did it send:" + resault.toString())
+                }
 
             }
         }

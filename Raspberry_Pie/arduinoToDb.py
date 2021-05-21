@@ -1,6 +1,7 @@
 import pyrebase
 import time
 import math
+import serial
 from time import sleep
 
 
@@ -66,6 +67,8 @@ currentRouteStartTime = ""
 previousPosition = Position(0,0)
 pastMessagesX = [0,0,0,0,0]
 decodedMessagesX =[0,0,0,0,0]
+ser = serial.Serial("/dev/ttyS0",115200,timeout=1)
+ser.flush()
 
 # Connect to firebase
 config = {

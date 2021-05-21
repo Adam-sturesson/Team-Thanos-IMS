@@ -26,5 +26,5 @@ while True:
     pastMessages = " "
 #m.angle.distance.obstacle
 #    decodedMessages = "m.120.10.1"
-    print(decodedMessages[0])
+    print(decodedMessages)
     #print(decodedMessages[0])

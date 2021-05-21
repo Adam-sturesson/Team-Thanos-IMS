@@ -76,7 +76,7 @@ config = {
 }
 firebase = pyrebase.initialize_app(config)
 db = firebase.database()
-
+loopVar = 0
 
 
 # Receive commands from Arduino continiously 
@@ -106,6 +106,10 @@ while True:
                     obstaclePositions.append(obstaclePosition.getJSONFormat())
                 previousPosition = currentPosition
                 print("Inserted position to list")
+                loopVar += 1
+                if loopVar == 5:
+                    addRouteInDb()
+                    break
             else:
                 print("No values")
                 

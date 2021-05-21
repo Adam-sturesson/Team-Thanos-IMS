@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import com.example.imsthanosapplication.CanvasActivity
 import com.example.imsthanosapplication.data.DatabaseHandler
 import com.example.imsthanosapplication.R
 import com.google.firebase.database.DataSnapshot

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CanvasActivity">
+    tools:context=".ui.CanvasActivity">
 
     <ImageView
         android:id="@+id/path_imageView"

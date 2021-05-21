@@ -21,8 +21,8 @@ object PathObject {
         var shapeDrawable: ShapeDrawable
         var path = Path()
         for (i in 0..PathCompanion.listOfPoints.size - 2){
-            path.moveTo(PathCompanion.listOfPoints[i].x.toFloat(), PathCompanion.listOfPoints[i].y.toFloat())
-            path.lineTo(PathCompanion.listOfPoints[i+1].x.toFloat(), PathCompanion.listOfPoints[i+1].y.toFloat())
+            path.moveTo((PathCompanion.listOfPoints[i].x.toFloat() * 3) + (width / 2), (PathCompanion.listOfPoints[i].y.toFloat() * 3) + (height / 2))
+            path.lineTo((PathCompanion.listOfPoints[i+1].x.toFloat() * 3) + (width / 2), (PathCompanion.listOfPoints[i+1].y.toFloat() * 3) + (height / 2))
         }
         var pathShape = PathShape(path,this.width.toFloat(),this.height.toFloat())
         shapeDrawable = ShapeDrawable(pathShape)
@@ -38,10 +38,10 @@ object PathObject {
         var shapeDrawable: ShapeDrawable
 
         for (i in 0 until PathCompanion.listOfObstacles.size) {
-            val left = PathCompanion.listOfObstacles[i].x - 10
-            val top = PathCompanion.listOfObstacles[i].y - 10
-            val right = PathCompanion.listOfObstacles[i].x + 10
-            val bottom = PathCompanion.listOfObstacles[i].y + 10
+            val left = (PathCompanion.listOfObstacles[i].x * 3) + (width/2) - 15
+            val top = (PathCompanion.listOfObstacles[i].y * 3) + (height/2) - 15
+            val right = (PathCompanion.listOfObstacles[i].x * 3) + (width/2) + 15
+            val bottom = (PathCompanion.listOfObstacles[i].y * 3) + (height/2) + 15
             shapeDrawable = ShapeDrawable(OvalShape())
             shapeDrawable.setBounds( left, top, right, bottom)
             shapeDrawable.paint.color = Color.parseColor("#FF0000")

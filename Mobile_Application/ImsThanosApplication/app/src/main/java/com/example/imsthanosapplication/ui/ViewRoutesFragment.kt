@@ -22,9 +22,8 @@ import com.example.imsthanosapplication.data.Route as Routes1
 
 class ViewRoutesFragment : Fragment(R.layout.fragment_mower_path) {
     val TAG = "DocSnippets"
-   // val db = DatabaseHandler.db
-
     var database = FirebaseDatabase.getInstance().reference
+
     @SuppressLint("ResourceType")
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -39,14 +38,13 @@ class ViewRoutesFragment : Fragment(R.layout.fragment_mower_path) {
 
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                routeItems.clear()
                 if (snapshot.exists()) {
                     Log.d(TAG,"Exists")
                     val data = snapshot.child("Routes").children
 
                     data.forEach {
                         val id = it.key.toString()
-                        //  val startTime = document.getTimestamp("startTime")
-                        //  val stopTime = document.getTimestamp("stopTime")
                         routeItems.add(Routes1(id))
                     }
                     arrayAdapter = ArrayAdapter(
@@ -73,36 +71,6 @@ class ViewRoutesFragment : Fragment(R.layout.fragment_mower_path) {
             }
         })
 
-            /*
-
-
-            db.collection("Routes").get()
-                .addOnSuccessListener { documents ->
-                    if (documents != null) {
-                        for (document in documents) {
-                            val id = document.id.toString()
-                            val startTime = document.getTimestamp("startTime")
-                            val stopTime = document.getTimestamp("stopTime")
-                            routeItems.add(Routes1(id, startTime, stopTime))
-                        }
-                        arrayAdapter = ArrayAdapter<Routes1>(
-                            view.context as Context,
-                            R.layout.list_view_item_routes,
-                            R.id.routeItem_textView,
-                            routeItems
-                        )
-                        routesListView.setAdapter(arrayAdapter)
-                        routesListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-                            val intent = Intent(view.context as Context,
-                                CanvasActivity::class.java)
-                            intent.putExtra("routeID", routeItems[position].id)
-                            this.startActivity(intent)
-                        }
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Log.w("error", "Error getting documents from database: ", exception)
-                }*/
         return view
     }
 }

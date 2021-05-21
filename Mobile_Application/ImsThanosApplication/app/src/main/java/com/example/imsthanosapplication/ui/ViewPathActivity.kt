@@ -33,6 +33,8 @@ class CanvasActivity() : AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         PathObject.height = displayMetrics.heightPixels
         PathObject.width = displayMetrics.widthPixels
+        PathCompanion.listOfPoints.clear()
+        PathCompanion.listOfObstacles.clear()
         getDataFromDatabase()
     }
 
@@ -48,8 +50,6 @@ private fun getDataFromDatabase(){
             if (snapshot.exists()) {
                 val data = snapshot.child("Routes").child(id!!).child("mowerPositions").children
                 data.forEach {
-                    PathObject.startPoint = Point(PathObject.width /2, PathObject.height /2)
-                    PathObject.addPoint(PathObject.startPoint)
                     val mowPos = it.getValue(MowerPosition::class.java)
                     val x = mowPos!!.x
                     val y = mowPos!!.y
@@ -57,7 +57,7 @@ private fun getDataFromDatabase(){
                     PathObject.drawPath(bitmap)
 
                 }
-                val obstaclesData = snapshot.child("Routes").child(id!!).child("testList").children
+                val obstaclesData = snapshot.child("Routes").child(id!!).child("obstaclePositions").children
                 obstaclesData.forEach {
                     val mowPos = it.getValue(MowerPosition::class.java)
                     val x = mowPos!!.x
@@ -82,6 +82,7 @@ private fun getDataFromDatabase(){
 }
     override fun onDestroy() {
         super.onDestroy()
+      //  PathObject.startPoint = Point(0,0)
         PathCompanion.listOfPoints.clear()
         PathCompanion.listOfObstacles.clear()
     }

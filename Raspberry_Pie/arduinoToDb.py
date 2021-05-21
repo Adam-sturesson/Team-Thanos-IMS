@@ -64,6 +64,8 @@ mowerPositions = []
 obstaclePositions = []
 currentRouteStartTime = ""
 previousPosition = Position(0,0)
+pastMessagesX = [0,0,0,0,0]
+decodedMessagesX =[0,0,0,0,0]
 
 # Connect to firebase
 config = {
@@ -76,6 +78,7 @@ firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
 
+
 # Receive commands from Arduino continiously 
 while True:
 
@@ -85,19 +88,14 @@ while True:
     RD += ser.read(DL)
   
     decodedMessages = RD.decode("utf-8") #Convert messages.
-    pastMessages = " "
     #m.angle.distance.obstacle
     # decodedMessages = "m.120.10.1"
     #print(decodedMessages[0])
-    print(decodedMessages)
-    if decodedMessages[0] == 'm':   #MOVEMENT DATA
-        if decodedMessages == pastMessages:
-            #Do nothing since the values are the same.
-            print("old value")
-            
-        else:
-            pastMessages = decodedMessages
-            values = decodedMessages.split(".",3) #splits messages and put into list.
+    decodedMessagesX = decodedMessages.split(".",4)
+    if decodedMessagesX[0] == 'm':   #MOVEMENT DATA
+        if decodedMessagesX[1] != pastMessagesX[1]:
+            pastMessagesX = decodedMessagesX
+            values = decoodedMessagesX #splits messages and put into list.
             
             if values:
                 movementData = MovementData(values[1], values[2], values[3], previousPosition)
@@ -111,10 +109,10 @@ while True:
             else:
                 print("No values")
                 
-    elif decodedMessages[0] == 'n': #Start route
+    elif decodedMessagesX[0] == 'n': #Start route
         routeStartTime = time.asctime(time.localtime(time.time()))
         
-    elif decodedMessage[0] == 's':  #Stop route
+    elif decodedMessageX[0] == 's':  #Stop route
         addRouteInDb()
         resetData()
                 

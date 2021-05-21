@@ -187,7 +187,7 @@ int gyroRun(){
 
 /*
 ------------------------------------------------------------------------------------------
---------------------------------------Bluetooth ------------ -----------------------------
+--------------------------------------Bluetooth ------------------------------------------
 ------------------------------------------------------------------------------------------
 */
 
@@ -223,6 +223,18 @@ bool bluetoothReceive(){
             mower.direction=4;
         else if(receivedCommand=='s')//top
             mower.direction=0;
+        else if(receivedCommand=='p'&&mower.routing==false){
+            mower.routing=true;
+            RPI_serial.println("p."+String(mower.angle)+"."+String(mower.distance)+".0.");
+            //gyroSetup();
+            //resetDistance();
+        }
+        else if(receivedCommand=='d'&&mower.routing==true)
+        {
+            mower.routing=false;
+            RPI_serial.println("d."+String(mower.angle)+"."+String(mower.distance)+".0."); 
+        }
+            
     }
     return mower.mode;
 }
@@ -305,11 +317,11 @@ void drivingLoop(){
 
           mower.distance=getDistance();
 
-          if(mower.obsticalDetected==true){
-              RPI_serial.println("m."+String(mower.angle)+"."+String(mower.distance)+".1.");
+          if(mower.obsticalDetected==true && mower.routing==true){
+            RPI_serial.println("m."+String(mower.angle)+"."+String(mower.distance)+".1.");
           }
-          if(mower.boundaryDetected){
-              RPI_serial.println("m."+String(mower.angle)+"."+String(mower.distance)+".0.");
+          if(mower.boundaryDetected && mower.routing==true){
+            RPI_serial.println("m."+String(mower.angle)+"."+String(mower.distance)+".0.");
           }
           
       }

@@ -46,9 +46,12 @@ struct MowerIndicators{
     unsigned long wait_until_ms  = 0;
     int turn_l_r_wait            = 0;
 
-    int previousTurn             =RIGHT;
+    int previousTurn             =RIGHT;// kan tas bort om vi fortsätter med att slumpa höger och vänster.
     bool obsticalDetected        =false;
     bool boundaryDetected        =false;
+
+    bool routing                 =false;
+    bool routStart               =false;
 };
 
 /*

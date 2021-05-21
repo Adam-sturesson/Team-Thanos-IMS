@@ -3,28 +3,25 @@ package com.example.imsthanosapplication.ui
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Build
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
-import androidx.annotation.RequiresApi
-import com.example.imsthanosapplication.BluetoothLE
-import android.widget.TextView
-import com.example.imsthanosapplication.BTObject
 import android.widget.Switch
-import com.example.imsthanosapplication.BluetoothHandler
+import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
+import com.example.imsthanosapplication.BluetoothLE
 import com.example.imsthanosapplication.R
 import com.example.imsthanosapplication.bleSingleton
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
 
 class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "ResourceAsColor")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -34,28 +31,32 @@ class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
 
 
         val ble : BluetoothLE? = bleSingleton.mBle
-
-        val manualDrivingButton = view.findViewById<Button>(R.id.manualDriving_button)
-        val autnomousDrivingButton = view.findViewById<Button>(R.id.autnomousDriving_button)
-        manualDrivingButton.setOnClickListener {
-            //Change color maybe in future
-            if (ble != null) {
-                ble.sendCommand(getString(R.string.manualDriving))
-                manualDrivingButton.setBackgroundColor(Color.GREEN)
-                autnomousDrivingButton.setBackgroundColor(Color.MAGENTA)
+        val autnomousDrivingButton = view.findViewById<MaterialButton>(R.id.autnomousDriving_button)
+        val manualDrivingButton = view.findViewById<MaterialButton>(R.id.manualDriving_button)
+        val materialButton: MaterialButtonToggleGroup
+        materialButton= view.findViewById<MaterialButtonToggleGroup>(R.id.materialButtons)
+        materialButton.addOnButtonCheckedListener{ group, checkedID,isChecked->
+            if(isChecked){
+                //the manual button is checked
+                if(checkedID == R.id.manualDriving_button){
+                    Log.d("ButtonChecked", "manual")
+                    if (ble != null) {
+                        ble.sendCommand(getString(R.string.manualDriving))
+                    }
+                }
+                //the autonomous button is checked
+                else{
+                    Log.d("ButtonChecked","autonomous")
+                    if (ble != null) {
+                        ble.sendCommand(getString(R.string.autonomousDriving))
+                    }
+                }
             }
+
         }
 
-        autnomousDrivingButton.setOnClickListener {
-            //Change color maybe in future
-            if (ble != null) {
-                ble.sendCommand(getString(R.string.autonomousDriving))
-                autnomousDrivingButton.setBackgroundColor(Color.GREEN)
-                manualDrivingButton.setBackgroundColor(Color.MAGENTA)
-            }
-        }
 
-        val startRouteSwitch = view.findViewById<Switch>(R.id.startRoute_switch)
+       val startRouteSwitch = view.findViewById<Switch>(R.id.startRoute_switch)
         startRouteSwitch.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked){
                 startRouteSwitch.text = resources.getString(R.string.stopRoute)

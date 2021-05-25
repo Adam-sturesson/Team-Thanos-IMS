@@ -23,7 +23,6 @@
 
 #define TURN_BACK_TIME      500
 #define TURN_STOP_TIME      500
-#define TURN_R_L_TIME       500
 
 #define STOP                0
 #define FORWARDS            1
@@ -36,26 +35,26 @@
 
 
 struct MowerIndicators{
-    bool mode                    = AUTO; // auto or man
+    bool mode                    = AUTO; 
     int speed                    = SPEED;
     int direction                = STOP;
     int state                    = IDEAL;
+    int turning_stage            = TURN_OFF;
     int angle                    = 0;
     int distance                 = 0;
-    int turning_stage            = TURN_OFF;
+
     unsigned long wait_until_ms  = 0;
     int turn_l_r_wait            = 0;
 
-    int previousTurn             =RIGHT;// kan tas bort om vi fortsätter med att slumpa höger och vänster.
     bool obsticalDetected        =false;
     bool boundaryDetected        =false;
 
     bool routing                 =false;
-    bool routStart               =false;
+    bool routStart               =false;   /*indicate the start of a route, used when sending data backend*/
 };
 
 /*
-                                                MOTOR RELATED
+                                                MOTOR 
 */
 
 
@@ -73,8 +72,8 @@ void moveSetup(int direction, int speed);
 
 /** 
 
-* Starts both motors by callig Encoder_1.loop().
-  Encoder_1.loop() :
+* Starts both motors by callig Encoder_1.loop() and Encoder_2.loop().
+  Encoder_1.loop() & Encoder_2.loop() :
    deliverd by the manufacturer,
    runs respective motor according setup no more than 1 time every 40 ms.
 
@@ -83,7 +82,7 @@ void drive();
 
 /** 
 
-* Excutes isr_process_encoder1 and isr_process_encoder2 when the an interrupt from respective motor occure.
+* Excutes isr_process_encoder1 and isr_process_encoder2 when an interrupt from respective motor occure.
   This make the continues update of motors position possible.
 
 */ 
@@ -116,7 +115,7 @@ void resetDistance();
 
 * Detects black colored lines.
 
-* @returns      blackLine which is true if the line is black and false otherwise.
+* @returns      true if the underlay is black and false otherwise.
 
 */ 
 bool detectedLine();
@@ -127,7 +126,9 @@ bool detectedLine();
 
 /** 
 
-*  Reads data from ultrasonic sensor.
+*  Detects obstacles infront of the mower
+
+*@param   distance the distance obstacles should be detected within.
 
 * @returns      true if there was an obstical within "distance" cm form the sensor
 
@@ -161,11 +162,9 @@ int gyroRun();
 
 /** 
 
-* Reads received data from bluetooth via Serial.
+* Reads received data from bluetooth and update the member variabels of the MowerIndicators structure.
 
-* @param   distance    distance value to obstical.
-
-* @returns   received data as a String.
+* @returns   true as long the received data is to drive manually.
 
 */ 
 bool bluetoothReceive();
@@ -173,12 +172,6 @@ bool bluetoothReceive();
 
 /** 
 
-* sends data to bluetooth via Serial.
-
-* @param   data data as a String to be sent.
-
-*/ 
-void bluetoothTransmitt(String data);
 
 /** 
 
@@ -196,8 +189,6 @@ void rpiSerialSetup();
 
 * Steers the beahvior of the mower.
 
-* @param   *state the start state fo the machine
-
 */
 void drivingLoop();
 
@@ -214,11 +205,10 @@ void drivingLoop();
 */ 
 void delayAndDO(float seconds,void (*func)(void));
 
+
 /** 
 
 * choose one random value of the value array turningTimes[]. 
-
-* 
 
 * @returns   one of 5 predefined values of waitin time.
 

@@ -187,17 +187,17 @@ int gyroRun(){
 
 /*
 ------------------------------------------------------------------------------------------
---------------------------------------Bluetooth ------------------------------------------
+--------------------------------------communication --------------------------------------
 ------------------------------------------------------------------------------------------
 */
 
 /*
-* Global variables related to Bluetooth.
+* Global variables related to communication.
 */
   MeSerial RPI_serial(PORT_5);
 
 /*
-* Bluetooth functions.
+* communication functions.
 */
 
 bool bluetoothReceive(){
@@ -239,8 +239,6 @@ bool bluetoothReceive(){
     return mower.mode;
 }
 
-void bluetoothTransmitt(String data){}
-
 void rpiSerialSetup(){
     RPI_serial.begin(115200);
 }
@@ -264,19 +262,19 @@ int turningTimes[5]={500,750,1000,1250,1500};
 
 void drivingLoop(){  
     switch (mower.state){
-    case IDEAL: //check for driving mode, auto defaulte.
+    case IDEAL: 
       if(bluetoothReceive()==MANUAL)
           mower.state=UPDATE_BT_COM;
       else
           mower.state=CHECK_BOUNDARY;
       break;
 
-    case UPDATE_BT_COM: // get direction from bluetooth.
+    case UPDATE_BT_COM: 
       moveSetup(mower.direction,SPEED);
       mower.state=DRIVE;
       break;
 
-    case CHECK_BOUNDARY: //check for the boundary line.
+    case CHECK_BOUNDARY: 
       if (detectedLine()==true&&mower.boundaryDetected==false){
           mower.state = SET_BACKWARDS;
           mower.turning_stage=TURN_OFF;
@@ -289,7 +287,7 @@ void drivingLoop(){
         
       break;
 
-    case CHECK_OBSTACLE: //check for the line.
+    case CHECK_OBSTACLE: 
       if (detectedObstacal(5)&&mower.obsticalDetected==false){
           mower.state = SET_BACKWARDS;
           mower.turning_stage=TURN_OFF;
@@ -304,7 +302,7 @@ void drivingLoop(){
       }      
       break;  
 
-    case SET_FORWARDS: // drive forward.
+    case SET_FORWARDS: 
       moveSetup(FORWARDS, SPEED);
       mower.state = DRIVE;
       break;
@@ -349,9 +347,7 @@ void drivingLoop(){
       if(mower.turning_stage==SET_STOP){
           mower.turning_stage=SET_RIGHT_LEFT;
           mower.wait_until_ms=millis()+randomTurningTime();
-          //returns 3 or 4 meaning left or right.
-          moveSetup(random(3,5),SPEED);//(7-mower.previousTurn) // each other right and left.
-          //mower.previousTurn=7-mower.previousTurn;
+          moveSetup(random(3,5),SPEED);
       }
       if(millis()<mower.wait_until_ms)
           mower.state=DRIVE;
@@ -375,14 +371,6 @@ void drivingLoop(){
     }
 }
 
-void delayAndDO(float seconds, void (*func)(void)){
-    if (seconds < 0.0){
-        seconds = 0.0;
-    }
-    unsigned long endTime = millis() + seconds * 1000;
-    while (millis() < endTime)
-        func();
-}
 
 int randomTurningTime(){
     return turningTimes[random(0,5)];

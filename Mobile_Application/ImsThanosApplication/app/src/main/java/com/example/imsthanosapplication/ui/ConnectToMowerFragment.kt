@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -29,14 +28,7 @@ class ConnectToMowerFragment : Fragment(R.layout.fragment_connection_screen) {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_connection_screen, container, false)
         val targetFragment = ControlMowerFragment()
-        var timer = object : CountDownTimer(15000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
 
-            }
-            override fun onFinish() {
-                view.findViewById<TextView>(R.id.errorTV).text = getString(R.string.tryAgain)
-            }
-        }
 
         val toggle = view.findViewById<ToggleButton>(R.id.connectBTN)
 
@@ -48,7 +40,6 @@ class ConnectToMowerFragment : Fragment(R.layout.fragment_connection_screen) {
             if (isChecked) {
                 // Connect to mower is clicked
                 if (bleSingleton.mBle != null) {
-                    timer.start()
                     bleSingleton.mBle!!.setup(requireContext())
                     bleSingleton.mBle!!.selectDevice()
                     if(ble!!.isConnected()){
@@ -63,15 +54,5 @@ class ConnectToMowerFragment : Fragment(R.layout.fragment_connection_screen) {
         }
 
         return view
-    }
-
-    fun btChangeFragment(timer:CountDownTimer, targetFragment: Fragment) {
-        if (ble!!.isConnected()) {
-            timer.cancel()
-            activity?.supportFragmentManager?.beginTransaction()?.apply {
-                replace(R.id.active_fragment, targetFragment )
-                commit()
-            }
-        }
     }
 }

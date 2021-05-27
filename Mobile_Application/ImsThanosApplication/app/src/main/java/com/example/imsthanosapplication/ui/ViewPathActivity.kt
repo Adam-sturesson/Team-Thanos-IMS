@@ -23,9 +23,8 @@ class PathCompanion {
 
 class CanvasActivity() : AppCompatActivity() {
 
-    val TAG = "DocSnippets"
     private val displayMetrics = DisplayMetrics()
-    var database = FirebaseDatabase.getInstance().reference
+    private var database = FirebaseDatabase.getInstance().reference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,58 +37,57 @@ class CanvasActivity() : AppCompatActivity() {
         getDataFromDatabase()
     }
 
+    private fun getDataFromDatabase() {
+        database.addValueEventListener(object : ValueEventListener {
 
-private fun getDataFromDatabase(){
-    database.addValueEventListener(object: ValueEventListener {
+            val id = intent.getStringExtra("routeID")
+            var imageV = findViewById<ImageView>(R.id.path_imageView)
+            val bitmap: Bitmap =
+                Bitmap.createBitmap(PathObject.width, PathObject.height, Bitmap.Config.ARGB_8888)
 
-        val id = intent.getStringExtra("routeID")
-        var imageV = findViewById<ImageView>(R.id.path_imageView)
-        val bitmap: Bitmap = Bitmap.createBitmap(PathObject.width, PathObject.height, Bitmap.Config.ARGB_8888)
-
-        override fun onDataChange(snapshot: DataSnapshot) {
-            if (snapshot.exists()) {
-                val data = snapshot.child("Routes").child(id!!).child("mowerPositions").children
-                data.forEach {
-                    val mowPos = it.getValue(MowerPosition::class.java)
-                    val x = mowPos!!.x
-                    val y = mowPos!!.y
-                    PathCompanion.listOfPoints.add(Point(x.hashCode(), y.hashCode()))
-                    PathObject.drawPath(bitmap)
-
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val data = snapshot.child("Routes").child(id!!).child("mowerPositions").children
+                    data.forEach {
+                        val mowPos = it.getValue(MowerPosition::class.java)
+                        val x = mowPos!!.x
+                        val y = mowPos!!.y
+                        PathCompanion.listOfPoints.add(Point(x.hashCode(), y.hashCode()))
+                        PathObject.drawPath(bitmap)
+                    }
+                    val obstaclesData =
+                        snapshot.child("Routes").child(id!!).child("obstaclePositions").children
+                    obstaclesData.forEach {
+                        val mowPos = it.getValue(MowerPosition::class.java)
+                        val x = mowPos!!.x
+                        val y = mowPos!!.y
+                        PathCompanion.listOfObstacles.add(Point(x.hashCode(), y.hashCode()))
+                        PathObject.drawObstacles(bitmap)
+                    }
+                    imageV.background = BitmapDrawable(resources, bitmap)
+                } else {
+                    val toast = Toast.makeText(
+                        applicationContext,
+                        "Something went wrong, please try again",
+                        Toast.LENGTH_SHORT
+                    )
+                    toast.show()
                 }
-                val obstaclesData = snapshot.child("Routes").child(id!!).child("obstaclePositions").children
-                obstaclesData.forEach {
-                    val mowPos = it.getValue(MowerPosition::class.java)
-                    val x = mowPos!!.x
-                    val y = mowPos!!.y
-                    PathCompanion.listOfObstacles.add(Point(x.hashCode(), y.hashCode()))
-                    PathObject.drawObstacles(bitmap)
-                }
-                imageV.background = BitmapDrawable(resources, bitmap)
             }
-            else{
-                val toast = Toast.makeText(applicationContext, "Something went wrong, please try again", Toast.LENGTH_SHORT)
+
+            override fun onCancelled(error: DatabaseError) {
+                val toast = Toast.makeText(applicationContext, "Database Error", Toast.LENGTH_SHORT)
                 toast.show()
-                Log.d(TAG, "snapshot does not exist")
             }
-        }
-        override fun onCancelled(error: DatabaseError) {
-            val toast = Toast.makeText(applicationContext, "Database Error", Toast.LENGTH_SHORT)
-            toast.show()
-            Log.d(TAG,"Canceld")
-        }
-    })
-}
+        })
+    }
     override fun onDestroy() {
         super.onDestroy()
-      //  PathObject.startPoint = Point(0,0)
         PathCompanion.listOfPoints.clear()
         PathCompanion.listOfObstacles.clear()
     }
-
     data class MowerPosition(
         var x: Int? = null,
         var y: Int? = null
     )
-
 }

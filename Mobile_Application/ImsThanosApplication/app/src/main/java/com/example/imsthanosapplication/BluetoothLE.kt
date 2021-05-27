@@ -1,4 +1,6 @@
 package com.example.imsthanosapplication
+
+import android.annotation.SuppressLint
 import android.app.Service
 import android.bluetooth.*
 import android.content.Context
@@ -7,6 +9,7 @@ import android.os.*
 import android.util.Log
 import androidx.annotation.RequiresApi
 
+@SuppressLint("StaticFieldLeak")
 object bleSingleton {
     val deviceAddress = "00:1B:10:66:46:83"
     val UUID_KEY_DATA = "0000ffe1-0000-1000-8000-00805f9b34fb"
@@ -16,9 +19,9 @@ object bleSingleton {
     var mBLEClass: BleClass? = null
     var mCurrentDevice: BluetoothDevice? = null
     var mIsConnected = false
-    var mGattService :BluetoothGattService? = null
-    var mGatt : BluetoothGatt? = null
-    var mBle : BluetoothLE? = null
+    var mGattService: BluetoothGattService? = null
+    var mGatt: BluetoothGatt? = null
+    var mBle: BluetoothLE? = null
 }
 
 
@@ -26,12 +29,14 @@ class BluetoothLE : Service() {
     init {
         bleSingleton.mBle = this
     }
+
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun setup(context: Context) {
         bleSingleton.mContext = context
-        var bluetoothManager : BluetoothManager? = null
+        var bluetoothManager: BluetoothManager? = null
         if (bleSingleton.mContext != null) {
-            bluetoothManager = bleSingleton.mContext!!.getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
+            bluetoothManager =
+                bleSingleton.mContext!!.getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
         }
 
         if (bluetoothManager != null) {
@@ -43,9 +48,7 @@ class BluetoothLE : Service() {
         }
 
         if (bleSingleton.mContext != null) {
-            Log.d("hejsan","context: " +  bleSingleton.mContext.toString())
             bleSingleton.mBLEClass = BleClass(bleSingleton.mContext!!)
-            Log.d("hejsan","mBLE: " +  bleSingleton.mBLEClass.toString())
         }
 
         if (!bleSingleton.mBLEClass!!.initialize()) {
@@ -73,8 +76,8 @@ class BluetoothLE : Service() {
     }
 
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    fun sendCommand(command:String): Boolean {
-        Log.d("hejsan","mBLE null? " + (bleSingleton.mBLEClass == null).toString())
+    fun sendCommand(command: String): Boolean {
+        Log.d("hejsan", "mBLE null? " + (bleSingleton.mBLEClass == null).toString())
         var result = bleSingleton.mBLEClass!!.writeCharacteristic(command)
         return result
     }

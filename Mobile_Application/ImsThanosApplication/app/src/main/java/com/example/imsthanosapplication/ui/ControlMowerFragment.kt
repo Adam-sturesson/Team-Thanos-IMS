@@ -23,7 +23,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 
 class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    @SuppressLint("ClickableViewAccessibility", "ResourceAsColor")
+    @SuppressLint("ClickableViewAccessibility", "ResourceAsColor", "UseSwitchCompatOrMaterialCode")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,132 +31,82 @@ class ControlMowerFragment : Fragment(R.layout.fragment_mower_contoller) {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_mower_contoller, container, false)
 
+        val ble: BluetoothLE? = bleSingleton.mBle
 
-        val ble : BluetoothLE? = bleSingleton.mBle
-        val autnomousDrivingButton = view.findViewById<MaterialButton>(R.id.autnomousDriving_button)
-        val manualDrivingButton = view.findViewById<MaterialButton>(R.id.manualDriving_button)
-        val materialButton: MaterialButtonToggleGroup
-        materialButton= view.findViewById<MaterialButtonToggleGroup>(R.id.materialButtons)
-        materialButton.addOnButtonCheckedListener{ group, checkedID,isChecked->
-            if(isChecked){
+        val materialButton: MaterialButtonToggleGroup = view.findViewById(R.id.materialButtons)
+        materialButton.addOnButtonCheckedListener { _, checkedID, isChecked ->
+            if (isChecked) {
                 //the manual button is checked
-                if(checkedID == R.id.manualDriving_button){
-                    Log.d("ButtonChecked", "manual")
-                    if (ble != null) {
-                        ble.sendCommand(getString(R.string.manualDriving))
-                    }
+                if (checkedID == R.id.manualDriving_button) {
+                    ble?.sendCommand(getString(R.string.manualDriving))
                 }
                 //the autonomous button is checked
-                else{
-                    Log.d("ButtonChecked","autonomous")
-                    if (ble != null) {
-                        ble.sendCommand(getString(R.string.autonomousDriving))
-                    }
+                else {
+                    Log.d("hejsan" ,ble?.sendCommand(getString(R.string.autonomousDriving)).toString())
                 }
             }
         }
-
-       val startRouteSwitch = view.findViewById<Switch>(R.id.startRoute_switch)
+        val startRouteSwitch = view.findViewById<Switch>(R.id.startRoute_switch)
         startRouteSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if(isChecked){
+            if (isChecked) {
                 startRouteSwitch.text = resources.getString(R.string.stopRoute)
-                Log.d("hejsan", "STARTED ROUTE")
-                if (ble != null) {
-                    var resault = ble.sendCommand("p")
-                    Log.d("hejsan","Did it send:" + resault.toString())
-                }
-            }else{
+                ble?.sendCommand("p")
+            } else {
                 startRouteSwitch.text = resources.getString(R.string.startRoute)
-                Log.d("hejsan", "STARTED ROUTE")
-                if (ble != null) {
-                    var resault = ble.sendCommand("d")
-                    Log.d("hejsan","Did it send:" + resault.toString())
-                }
-
+                ble?.sendCommand("d")
             }
         }
-
         val forwardButton = view.findViewById<ImageButton>(R.id.forward_button)
 
-        forwardButton.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        if (ble != null) {
-                            ble.sendCommand(getString(R.string.forward))
-                        }
-                    }
-
-                    MotionEvent.ACTION_UP -> {
-                        if (ble != null) {
-                            ble.sendCommand(getString(R.string.stop))
-                        }
-                    }
+        forwardButton.setOnTouchListener { v, event ->
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    ble?.sendCommand(getString(R.string.forward))
                 }
-                return v?.onTouchEvent(event) ?: true
+                MotionEvent.ACTION_UP -> {
+                    ble?.sendCommand(getString(R.string.stop))
+                }
             }
-        })
+            v?.onTouchEvent(event) ?: true
+        }
         val rightButton = view.findViewById<ImageButton>(R.id.right_button)
-        rightButton.setOnTouchListener(object :
-            View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        if (ble != null) {
-                            ble.sendCommand(getString(R.string.right))
-                        }
-                    }
-                    MotionEvent.ACTION_UP -> {
-                        if (ble != null) {
-                            ble.sendCommand(getString(R.string.stop))
-                        }
-                    }
+        rightButton.setOnTouchListener { v, event ->
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    ble?.sendCommand(getString(R.string.right))
                 }
-                return v?.onTouchEvent(event) ?: true
+                MotionEvent.ACTION_UP -> {
+                    ble?.sendCommand(getString(R.string.stop))
+                }
             }
-        })
+            v?.onTouchEvent(event) ?: true
+        }
 
         val leftButton = view.findViewById<ImageButton>(R.id.left_button)
-        leftButton.setOnTouchListener(object :
-            View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        if (ble != null) {
-                            ble.sendCommand(getString(R.string.left))
-                        }
-                    }
-
-                    MotionEvent.ACTION_UP -> {
-                        if (ble != null) {
-                            ble.sendCommand(getString(R.string.stop))
-                        }
-                    }
+        leftButton.setOnTouchListener { v, event ->
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    ble?.sendCommand(getString(R.string.left))
                 }
-                return v?.onTouchEvent(event) ?: true
+                MotionEvent.ACTION_UP -> {
+                    ble?.sendCommand(getString(R.string.stop))
+                }
             }
-        })
+            v?.onTouchEvent(event) ?: true
+        }
 
         val backwardButton = view.findViewById<ImageButton>(R.id.backward_button)
-        backwardButton.setOnTouchListener(object :
-            View.OnTouchListener {
-            override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-                when (event?.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        if (ble != null) {
-                            ble.sendCommand(getString(R.string.backward))
-                        }
-                    }
-
-                    MotionEvent.ACTION_UP -> {
-                        if (ble != null) {
-                            ble.sendCommand(getString(R.string.stop))
-                        }
-                    }
+        backwardButton.setOnTouchListener { v, event ->
+            when (event?.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    ble?.sendCommand(getString(R.string.backward))
                 }
-                return v?.onTouchEvent(event) ?: true
+                MotionEvent.ACTION_UP -> {
+                    ble?.sendCommand(getString(R.string.stop))
+                }
             }
-        })
+            v?.onTouchEvent(event) ?: true
+        }
         return view
     }
 }

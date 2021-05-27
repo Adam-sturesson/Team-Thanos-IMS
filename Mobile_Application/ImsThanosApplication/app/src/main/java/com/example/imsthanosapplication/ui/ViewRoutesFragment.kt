@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import com.example.imsthanosapplication.data.DatabaseHandler
 import com.example.imsthanosapplication.R
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,28 +20,25 @@ import com.google.firebase.database.ValueEventListener
 import com.example.imsthanosapplication.data.Route as Routes1
 
 class ViewRoutesFragment : Fragment(R.layout.fragment_mower_path) {
-    val TAG = "DocSnippets"
-    var database = FirebaseDatabase.getInstance().reference
+    private var database = FirebaseDatabase.getInstance().reference
 
     @SuppressLint("ResourceType")
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
 
         val view = inflater.inflate(R.layout.fragment_mower_path, container, false)
-        var routesListView = view.findViewById<ListView>(R.id.routesListView)
-        var routeItems = ArrayList<Routes1>()
+        val routesListView = view.findViewById<ListView>(R.id.routesListView)
+        val routeItems = ArrayList<Routes1>()
         var arrayAdapter: ArrayAdapter<Routes1>? = null
 
         database.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 routeItems.clear()
                 if (snapshot.exists()) {
-                    Log.d(TAG,"Exists")
                     val data = snapshot.child("Routes").children
-
                     data.forEach {
                         val id = it.key.toString()
                         routeItems.add(Routes1(id))
@@ -54,23 +50,22 @@ class ViewRoutesFragment : Fragment(R.layout.fragment_mower_path) {
                         routeItems
                     )
                     routesListView.adapter = arrayAdapter
-                    routesListView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-                        val intent = Intent(view.context as Context,
-                            CanvasActivity::class.java)
-                        intent.putExtra("routeID", routeItems[position].id)
-                        activity!!.startActivity(intent)
-                    }
-                }
-                else{
-                    Log.d(TAG, "snapshot does not exist")
+                    routesListView.onItemClickListener =
+                        AdapterView.OnItemClickListener { _, _, position, _ ->
+                            val intent = Intent(
+                                view.context as Context,
+                                CanvasActivity::class.java
+                            )
+                            intent.putExtra("routeID", routeItems[position].id)
+                            activity!!.startActivity(intent)
+                        }
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Log.d(TAG,"Canceld")
+                Log.d("message", "Canceled")
             }
         })
-
         return view
     }
 }

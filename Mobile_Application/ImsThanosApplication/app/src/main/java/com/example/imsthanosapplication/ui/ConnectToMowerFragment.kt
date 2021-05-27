@@ -17,18 +17,15 @@ import androidx.annotation.RequiresApi
 import com.example.imsthanosapplication.*
 
 
-
 class ConnectToMowerFragment : Fragment(R.layout.fragment_connection_screen) {
-    var ble : BluetoothLE? = BluetoothLE()
+    var ble: BluetoothLE? = BluetoothLE()
+
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_connection_screen, container, false)
-        val targetFragment = ControlMowerFragment()
-
 
         val toggle = view.findViewById<ToggleButton>(R.id.connectBTN)
 
@@ -42,17 +39,16 @@ class ConnectToMowerFragment : Fragment(R.layout.fragment_connection_screen) {
                 if (bleSingleton.mBle != null) {
                     bleSingleton.mBle!!.setup(requireContext())
                     bleSingleton.mBle!!.selectDevice()
-                    if(ble!!.isConnected()){
-                        Toast.makeText(view.context as Context, "connected",Toast.LENGTH_SHORT).show()
+                    if (ble!!.isConnected()) {
+                        Toast.makeText(view.context as Context, "connected", Toast.LENGTH_SHORT)
+                            .show()
                     }
-                    Log.d("hejsan", "pressed button connect " + ble!!.isConnected().toString())
                 }
             } else {
                 // the disconnect is clicked
                 bleSingleton.mBLEClass?.close()
             }
         }
-
         return view
     }
 }

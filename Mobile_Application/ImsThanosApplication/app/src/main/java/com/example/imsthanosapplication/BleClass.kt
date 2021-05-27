@@ -3,7 +3,6 @@ package com.example.imsthanosapplication
 import android.bluetooth.*
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import java.util.*
 
@@ -38,19 +37,15 @@ class BleClass {
             super.onConnectionStateChange(gatt, status, newState)
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 mOnConnectListener?.onConnect(gatt)
-                Log.d("hejsan", "Connected to Gattserver")
-                Log.d("hejsan", "Attempting to start service discovery:" + mBluetoothGatt?.discoverServices())
+                mBluetoothGatt?.discoverServices()
                 bleSingleton.mGattService = mBluetoothGatt!!.getService(UUID.fromString(bleSingleton.UUID_KEY_DATA))
             }
         }
 
         override fun onCharacteristicWrite(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?, status: Int) {
-            Log.d("hejsan", "onCharacteristicWrite received: $status")
         }
         override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
             bleSingleton.mGatt = gatt
-            Log.w("hejsan", "onServicesDiscovered received: $status")
-
         }
 
         override fun onCharacteristicRead(gatt: BluetoothGatt?, characteristic: BluetoothGattCharacteristic?,status: Int) {
@@ -71,14 +66,12 @@ class BleClass {
         if (mBluetoothManager == null) {
             mBluetoothManager = mContext!!.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             if (mBluetoothManager == null) {
-                Log.d("hejsan", "Unable to initialize BluetoothManager.")
                 return false
             }
         }
 
         mBluetoothAdapter = mBluetoothManager!!.adapter
         if (mBluetoothAdapter == null) {
-            Log.d("hejsan", "Unable to obtain a BluetoothAdapter.")
             return false
         }
         return true
@@ -87,26 +80,13 @@ class BleClass {
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     fun connect(address: String?): Boolean {
         if (mBluetoothAdapter == null || address == null) {
-            Log.d("hejsan", "BluetoothAdapter not initialized or unspecified address.")
             return false
         }
-        if (address != null && mBluetoothGatt != null) {
-            Log.d("hejsan", "Trying to use an existing mBluetoothGatt for connection.")
-            return if (mBluetoothGatt!!.connect()) {
-                Log.d("hejsan", "Ble Connected.")
-                true
-            } else {
-                Log.d("hejsan", "Ble Connecting fail.")
-                false
-            }
+        if (mBluetoothGatt != null) {
+            return mBluetoothGatt!!.connect()
         }
-        val device = mBluetoothAdapter!!.getRemoteDevice(address)
-        if (device == null) {
-            Log.d("hejsan", "Device not found.  Unable to connect.")
-            return false
-        }
+        val device = mBluetoothAdapter!!.getRemoteDevice(address) ?: return false
         mBluetoothGatt = device.connectGatt(mContext, false, bleGattCallback)
-        Log.d("hejsan", "Trying to create a new connection.")
         return true
     }
 
@@ -126,11 +106,9 @@ class BleClass {
                 for (characteristic in gattService.characteristics) {
                     if (characteristic.uuid.toString() == bleSingleton.UUID_WRITE_CHARACTERISTIC) {
                         characteristic.setValue(command)
-                        var succeed = mBluetoothGatt!!.writeCharacteristic(characteristic)
-                        Log.d("hejsan", "writeCharacteristic: $command $succeed")
-                        return succeed
+                        return mBluetoothGatt!!.writeCharacteristic(characteristic)
                     }
-                }
+                } 
             }
         }
         return false

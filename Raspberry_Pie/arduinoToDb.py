@@ -45,8 +45,10 @@ def convertMovementDataToObstaclePosition(movementData):
     return Position(x,y)
 
 def addRouteInDb():
-    db.child("Routes").child(currentRouteStartTime).child("mowerPositions").set(mowerPositions)
-    db.child("Routes").child(currentRouteStartTime).child("obstaclePositions").set(obstaclePositions)
+    db.child("Routes").child(routeStartTime).child("mowerPositions").set(mowerPositions)
+    db.child("Routes").child(routeStartTime).child("obstaclePositions").set(obstaclePositions)
+    print("db check\n")
+    print(routeStartTime)
 
 def resetData():
     previousPosition.x = 0
@@ -70,6 +72,8 @@ decodedMessagesX =[0,0,0,0,0]
 ser = serial.Serial("/dev/ttyS0",115200,timeout=1)
 ser.flush()
 
+print("Connecting to firebase...\n")
+
 # Connect to firebase
 config = {
   "apiKey": "AAAActQSqd0:APA91bHYXP7Y1PJGv0moMGKLQJQI87fHufCP5mv8tx3pNZxRQgJxRPkFnwwqvRTCBpMsRKIy42Ci3aq3C5d9yM2JxzaO-uEsTlK-_tZHLhXCCrhYlWQ2VqzWQj58oKQA24sk86pUNEUj",
@@ -79,12 +83,16 @@ config = {
 }
 firebase = pyrebase.initialize_app(config)
 db = firebase.database()
-loopVar = 0
+#loopVar = 0
 
+print("Connected to firebase \n")
+
+print("Starting loop...\n")
 
 # Receive commands from Arduino continiously 
 while True:
 
+    #routeStartTime = time.asctime(time.localtime(time.time()))
     RD = ser.read()
     sleep(0.03)
     DL = ser.inWaiting()
@@ -95,31 +103,41 @@ while True:
     # decodedMessages = "m.120.10.1"
     #print(decodedMessages[0])
     decodedMessagesX = decodedMessages.split(".",4)
+
     if decodedMessagesX[0] == 'm':   #MOVEMENT DATA
         if decodedMessagesX[1] != pastMessagesX[1]:
             pastMessagesX = decodedMessagesX
-            values = decoodedMessagesX #splits messages and put into list.
+            values = decodedMessagesX #splits messages and put into list.
             
             if values:
-                movementData = MovementData(values[1], values[2], values[3], previousPosition)
-                currentPositon = convertMovementDataToMowerPosition(movementData)
+                movementData = MovementData(int(values[1]), int(values[2]), int(values[3]), previousPosition)
+                currentPosition = convertMovementDataToMowerPosition(movementData)
                 mowerPositions.append(currentPosition.getJSONFormat())
                 if movementData.avoidedObstacle:
                     obstaclePosition = convertMovementDataToObstaclePosition(movementData)
                     obstaclePositions.append(obstaclePosition.getJSONFormat())
                 previousPosition = currentPosition
+                
+                if values:
+                    for x in range(len(values)):
+                
+                        print(values[x])
+                
                 print("Inserted position to list")
-                loopVar += 1
-                if loopVar == 5:
-                    addRouteInDb()
-                    break
+               # loopVar += 1
+                #if loopVar == 5:
+                 #   addRouteInDb()
+                  #  break
             else:
                 print("No values")
                 
-    elif decodedMessagesX[0] == 'n': #Start route
+    elif decodedMessagesX[0] == 'p': #Start route
         routeStartTime = time.asctime(time.localtime(time.time()))
+        print("Start route")
+        print(routeStartTime)
         
-    elif decodedMessageX[0] == 's':  #Stop route
+    elif decodedMessagesX[0] == 'd':  #Stop route
+        print("stop route")
         addRouteInDb()
         resetData()
                 

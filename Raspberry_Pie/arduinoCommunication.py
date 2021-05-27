@@ -12,6 +12,7 @@ ser.flush()
 pastMessagesX = [0,0,0,0,0]
 decodedMessagesX =[0,0,0,0,0]
 
+print("test")
 
 
 while True:

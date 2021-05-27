@@ -4,11 +4,7 @@ import math
 import serial
 from time import sleep
 
-
-
-
 ############################################CLASSES#######################################################
-
 
 # This is the raw, not yet converted, movement data sent from the arduino
 class MovementData:
@@ -28,7 +24,6 @@ class Position:
             "x" : self.x,
             "y" : self.y
         }
-        
 
 ############################################FUNCTIONS#######################################################
     
@@ -47,8 +42,6 @@ def convertMovementDataToObstaclePosition(movementData):
 def addRouteInDb():
     db.child("Routes").child(routeStartTime).child("mowerPositions").set(mowerPositions)
     db.child("Routes").child(routeStartTime).child("obstaclePositions").set(obstaclePositions)
-    print("db check\n")
-    print(routeStartTime)
 
 def resetData():
     previousPosition.x = 0
@@ -56,11 +49,7 @@ def resetData():
     mowerPositions.clear()
     obstaclePositions.clear()
 
-
-
 ############################################MAIN CODE#######################################################
-
-
 
 # Variables
 mowerPositions = []
@@ -83,27 +72,19 @@ config = {
 }
 firebase = pyrebase.initialize_app(config)
 db = firebase.database()
-#loopVar = 0
-
 print("Connected to firebase \n")
 
 print("Starting loop...\n")
 
-# Receive commands from Arduino continiously 
+# Receive commands from Arduino continuously
 while True:
-
-    #routeStartTime = time.asctime(time.localtime(time.time()))
     RD = ser.read()
     sleep(0.03)
     DL = ser.inWaiting()
     RD += ser.read(DL)
   
     decodedMessages = RD.decode("utf-8") #Convert messages.
-    #m.angle.distance.obstacle
-    # decodedMessages = "m.120.10.1"
-    #print(decodedMessages[0])
     decodedMessagesX = decodedMessages.split(".",4)
-
     if decodedMessagesX[0] == 'm':   #MOVEMENT DATA
         if decodedMessagesX[1] != pastMessagesX[1]:
             pastMessagesX = decodedMessagesX
@@ -120,30 +101,12 @@ while True:
                 
                 if values:
                     for x in range(len(values)):
-                
                         print(values[x])
-                
-                print("Inserted position to list")
-               # loopVar += 1
-                #if loopVar == 5:
-                 #   addRouteInDb()
-                  #  break
-            else:
-                print("No values")
                 
     elif decodedMessagesX[0] == 'p': #Start route
         routeStartTime = time.asctime(time.localtime(time.time()))
-        print("Start route")
         print(routeStartTime)
         
     elif decodedMessagesX[0] == 'd':  #Stop route
-        print("stop route")
         addRouteInDb()
         resetData()
-                
-    
-   
-      
-
-   
-    

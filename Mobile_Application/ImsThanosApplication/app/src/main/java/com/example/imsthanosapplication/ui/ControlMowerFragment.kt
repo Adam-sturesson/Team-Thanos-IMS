@@ -15,6 +15,7 @@ import android.widget.ImageButton
 import android.widget.Switch
 import androidx.annotation.RequiresApi
 import com.example.imsthanosapplication.BluetoothLE
+import android.widget.TextView
 import com.example.imsthanosapplication.R
 import com.example.imsthanosapplication.bleSingleton
 import com.google.android.material.button.MaterialButton

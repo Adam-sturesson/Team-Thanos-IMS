@@ -115,7 +115,7 @@ class BleClass {
         if (mBluetoothGatt == null) {
             return
         }
-        mBluetoothGatt!!.close()
+        mBluetoothGatt!!.disconnect()
         mBluetoothGatt = null
     }
 

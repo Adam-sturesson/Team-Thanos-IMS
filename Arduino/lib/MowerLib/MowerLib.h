@@ -6,35 +6,55 @@
 #include <Wire.h>
 #include <SoftwareSerial.h>
 
-#define BOUNDARY_CHECK      0
-#define DRIVE_FORWARD       1
-#define TURN_FROM_BOUNDARY  2
-#define OBSTICALS_CHECK     3
-#define TURN_FROM_OBSTACAL  4
-#define MANUEL              5
-#define AUTO                6
-#define IDEAL               7
-#define RECEIVE_BT          8
+#define IDEAL               0
+#define UPDATE_BT_COM       1
+#define CHECK_BOUNDARY      2
+#define CHECK_OBSTACLE      3
+#define SET_FORWARDS        4
+#define SET_BACKWARDS       5
+#define SET_RIGHT_LEFT      6
+#define SET_STOP            7
+#define DRIVE               8
 
-#define STOP               0
-#define FORWARDS           1
-#define BACKWARDS          2
-#define LEFT               3
-#define RIGHT              4
-#define SPEED              40
+#define MANUAL              0
+#define AUTO                1
+
+#define TURN_OFF            0
+
+#define TURN_BACK_TIME      500
+#define TURN_STOP_TIME      500
+
+#define STOP                0
+#define FORWARDS            1
+#define BACKWARDS           2
+#define LEFT                3
+#define RIGHT               4
+#define SPEED               40
+
+#define WHEEL_RADIUS        2
 
 
 struct MowerIndicators{
-    bool Manuel     =false; // auto or man
-    int speed       =SPEED; 
-    int direction   =STOP;
-    int state       =IDEAL;
-    int angle       =0;
-    int distance    =0;
+    bool mode                    = AUTO; 
+    int speed                    = SPEED;
+    int direction                = STOP;
+    int state                    = IDEAL;
+    int turning_stage            = TURN_OFF;
+    int angle                    = 0;
+    int distance                 = 0;
+
+    unsigned long wait_until_ms  = 0;
+    int turn_l_r_wait            = 0;
+
+    bool obsticalDetected        =false;
+    bool boundaryDetected        =false;
+
+    bool routing                 =false;
+    bool routStart               =false;   /*indicate the start of a route, used when sending data backend*/
 };
 
 /*
-                                                MOTOR RELATED
+                                                MOTOR 
 */
 
 
@@ -47,24 +67,22 @@ struct MowerIndicators{
 
 * @param   speed        a percentage that indicates the motor speed.
 
-*/ 
-
+*/
 void moveSetup(int direction, int speed);
 
 /** 
 
-* Starts both motors by callig Encoder_1.loop().
-  Encoder_1.loop() :
-  deliverd by the manufacturer,
-  runs respective motor according setup no more than 1 time every 40 ms.
+* Starts both motors by callig Encoder_1.loop() and Encoder_2.loop().
+  Encoder_1.loop() & Encoder_2.loop() :
+   deliverd by the manufacturer,
+   runs respective motor according setup no more than 1 time every 40 ms.
 
-*/ 
-
+*/
 void drive();
 
 /** 
 
-* Excutes isr_process_encoder1 and isr_process_encoder2 when the an interrupt from respective motor occure.
+* Excutes isr_process_encoder1 and isr_process_encoder2 when an interrupt from respective motor occure.
   This make the continues update of motors position possible.
 
 */ 
@@ -97,7 +115,7 @@ void resetDistance();
 
 * Detects black colored lines.
 
-* @returns      blackLine which is true if the line is black and false otherwise.
+* @returns      true if the underlay is black and false otherwise.
 
 */ 
 bool detectedLine();
@@ -108,7 +126,9 @@ bool detectedLine();
 
 /** 
 
-*  Reads data from ultrasonic sensor.
+*  Detects obstacles infront of the mower
+
+*@param   distance the distance obstacles should be detected within.
 
 * @returns      true if there was an obstical within "distance" cm form the sensor
 
@@ -142,11 +162,9 @@ int gyroRun();
 
 /** 
 
-* Reads received data from bluetooth via Serial.
+* Reads received data from bluetooth and update the member variabels of the MowerIndicators structure.
 
-* @param   distance    distance value to obstical.
-
-* @returns   received data as a String.
+* @returns   true as long the received data is to drive manually.
 
 */ 
 bool bluetoothReceive();
@@ -154,12 +172,13 @@ bool bluetoothReceive();
 
 /** 
 
-* sends data to bluetooth via Serial.
 
-* @param   data data as a String to be sent.
+/** 
+
+* Executes a SoftwareSerial.begin() function with 9600 baudrate.
 
 */ 
-void bluetoothTransmitt(String data);
+void rpiSerialSetup();
 
 /*
                                                 MOWER BEHAVIOUR
@@ -169,8 +188,6 @@ void bluetoothTransmitt(String data);
 /** 
 
 * Steers the beahvior of the mower.
-
-* @param   *state the start state fo the machine
 
 */
 void drivingLoop();
@@ -187,6 +204,16 @@ void drivingLoop();
 
 */ 
 void delayAndDO(float seconds,void (*func)(void));
+
+
+/** 
+
+* choose one random value of the value array turningTimes[]. 
+
+* @returns   one of 5 predefined values of waitin time.
+
+*/ 
+int randomTurningTime();
 
 
 

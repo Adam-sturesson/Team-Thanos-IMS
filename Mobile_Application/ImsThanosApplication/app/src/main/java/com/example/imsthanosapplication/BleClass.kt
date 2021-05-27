@@ -108,7 +108,7 @@ class BleClass {
                         characteristic.setValue(command)
                         return mBluetoothGatt!!.writeCharacteristic(characteristic)
                     }
-                } 
+                }
             }
         }
         return false
